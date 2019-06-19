@@ -1,5 +1,7 @@
 <template>
-    <div>Masters</div>
+    <div>
+        <h3>Masters</h3>
+    </div>
 </template>
 
 <script>
