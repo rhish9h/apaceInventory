@@ -1,9 +1,54 @@
 <template>
     <div>
-        <div class="heading" @click="allRecords">Masters</div>
-        <hr>
-        <div id="tableDisplay">
-          <b-table striped hover :items="items"></b-table>
+        <div class="masterTabs">
+          <b-card no-body>
+            <b-tabs card>
+              <b-tab title="Order Details" @click="allRecords" active>
+                <b-card-text>
+                  <div id="addRecord">
+                    <b-button v-b-toggle.collapse-1 variant="primary">Add</b-button>
+                    <b-collapse id="collapse-1" class="mt-2">
+                      <b-card>
+                        <p class="card-text">
+                          <b-container fluid>
+                            <b-row class="my-1" v-for="type in types" :key="type">
+                              <b-col sm="3">
+                                <label :for="`type-${type}`">Type {{ type }}:</label>
+                              </b-col>
+                              <b-col sm="9">
+                                <b-form-input :id="`type-${type}`" :type="type"></b-form-input>
+                              </b-col>
+                            </b-row>
+                          </b-container>
+                        </p>
+                      </b-card>
+                    </b-collapse>
+                  </div>
+                  <div id="tableDisplay">
+                    <b-table striped hover :items="items"></b-table>
+                  </div>
+                </b-card-text>
+              </b-tab>
+              <b-tab title="Material Master">
+                <b-card-text></b-card-text>
+              </b-tab>
+              <b-tab title="Material Type Master">
+                <b-card-text></b-card-text>
+              </b-tab>
+              <b-tab title="Product Master">
+                <b-card-text></b-card-text>
+              </b-tab>
+              <b-tab title="Uom Master">
+                <b-card-text></b-card-text>
+              </b-tab>
+              <b-tab title="Vendor Master">
+                <b-card-text></b-card-text>
+              </b-tab>
+              <b-tab title="Vendor Type Master">
+                <b-card-text></b-card-text>
+              </b-tab>
+            </b-tabs>
+          </b-card>
         </div>
     </div>
 </template>
@@ -13,7 +58,19 @@ export default {
   name: 'masters',
   data () {
     return {
-      items: []
+      items: [],
+      types: [
+        'text',
+        'password',
+        'email',
+        'number',
+        'url',
+        'tel',
+        'date',
+        `time`,
+        'range',
+        'color'
+      ]
     }
   },
   methods: {
@@ -26,13 +83,18 @@ export default {
           console.log(error)
         })
     }
+  },
+  beforeMount () {
+    this.allRecords()
   }
 }
 </script>
 
 <style scoped>
-  .heading {
-    font-size: 1.2em;
-    padding-top: 0.6em;
+  #addRecord {
+    margin-top: 0.7em;
+    float:left;
+    margin-left: 1em;
+    margin-bottom: 0.7em;
   }
 </style>
