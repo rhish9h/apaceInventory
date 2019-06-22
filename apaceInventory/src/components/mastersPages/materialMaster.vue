@@ -17,7 +17,11 @@ export default {
   },
   methods: {
     allRecords: function () {
-      this.axios.get('http://localhost/api/materialMaster/displayMatMast.php')
+      this.axios.get('http://localhost/api/displayTable.php', {
+        params: {
+          tableName: 'material master'
+        }
+      })
         .then((response) => {
           this.items = response.data
         })

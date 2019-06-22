@@ -47,7 +47,11 @@ export default {
   },
   methods: {
     allRecords: function () {
-      this.axios.get('http://localhost/api/displayTable.php')
+      this.axios.get('http://localhost/api/displayTable.php', {
+        params: {
+          tableName: 'order details'
+        }
+      })
         .then((response) => {
           this.items = response.data
         })

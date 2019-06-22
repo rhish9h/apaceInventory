@@ -4,18 +4,12 @@
     header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
     header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control");
     
-    $host = "localhost";
-    $user = "root";
-    $password = "";
-    $dbname = "apace";
+    include 'config.php';
 
-    $conn = mysqli_connect($host, $user, $password, $dbname);
+    $query = "select * from `".$_GET['tableName']."` WHERE 1";
+    // $query = "select * from `order details` WHERE 1";
 
-    if (!$conn) {
-        die (mysqli_connect_error());
-    }
-
-    $userData = mysqli_query($conn, "select * from `order details` WHERE 1");
+    $userData = mysqli_query($conn, $query);
     $response = array();
 
     while($row = mysqli_fetch_assoc($userData)){
