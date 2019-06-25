@@ -1,7 +1,7 @@
 <template>
     <div>
         <div id="matMastTable">
-            <b-table class="small small" striped hover :items="items"></b-table>
+            <b-table class="small small" striped hover :items="items" :per-page=10></b-table>
         </div>
     </div>
 </template>

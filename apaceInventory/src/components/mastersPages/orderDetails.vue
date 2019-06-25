@@ -1,5 +1,6 @@
 <template>
     <div>
+      <!-- add record into the table -->
         <div id="addRecord">
             <b-button v-b-toggle.collapse-1 variant="primary">Add</b-button>
             <b-collapse id="collapse-1" class="mt-2">
@@ -36,9 +37,42 @@
                 <b-button variant="success" @click="pushOrderDetails">add record</b-button>
                 </b-card>
             </b-collapse>
+
+        <!-- display the table -->
         </div>
         <div id="tableDisplay">
-         <b-table class="small" striped hover :items="items"></b-table>
+         <b-table class="small" striped hover
+         :items="items"
+         :fields="fields"
+         @row-clicked="rowClicked">
+
+            <!-- buttons for delete and update
+            slot-scope row used to access particular row-->
+            <template slot="delete / update" slot-scope="row">
+              <b-button size="sm" @click="deleteClicked(row)" class="mr-2">Delete</b-button>
+              <b-button size="sm" @click="row.toggleDetails" class="mr-2">
+                {{ row.detailsShowing ? 'Hide' : 'Update'}}
+              </b-button>
+            </template>
+
+            <!-- collapse for updation of row -->
+            <template slot="row-details" slot-scope="row">
+              <b-card>
+                <b-row class="mb-2">
+                  <b-col sm="3" class="text-sm-right"><b>Age:</b></b-col>
+                  <b-col>{{ row.item.age }}</b-col>
+                </b-row>
+
+                <b-row class="mb-2">
+                  <b-col sm="3" class="text-sm-right"><b>Is Active:</b></b-col>
+                  <b-col>{{ row.item.isActive }}</b-col>
+                </b-row>
+
+                <b-button size="sm" @click="row.toggleDetails">Hide</b-button>
+              </b-card>
+            </template>
+
+         </b-table>
         </div>
     </div>
 </template>
@@ -48,6 +82,7 @@ export default {
   name: 'orderDetails',
   data () {
     return {
+      fields: ['delete / update', 'serial number', 'suborder id', 'size', 'quantity'],
       items: [],
       inputs: {
         subid: '',
@@ -57,10 +92,11 @@ export default {
     }
   },
   methods: {
+    // to display table
     allRecords: function () {
       this.axios.get('http://localhost/api/displayTable.php', {
         params: {
-          tableName: 'order details'
+          tableName: 'order details' // send table name to be displayed
         }
       })
         .then((response) => {
@@ -70,12 +106,33 @@ export default {
           console.log(error)
         })
     },
+    // to add data in the table
     pushOrderDetails: function () {
       this.axios.get('http://localhost/api/pushDetails.php', {
         params: {
-          subid: this.inputs.subid,
+          subid: this.inputs.subid, // send data to be added in the table
           size: this.inputs.size,
           quant: this.inputs.quant
+        }
+      })
+        .then((response) => {
+          this.allRecords() // display table again after addition
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    },
+    // after row click
+    rowClicked: function (record, index) {
+      console.log(record['serial number'] + index)
+    },
+    // after delete button clicked
+    deleteClicked: function (row) {
+      console.log(row.item['serial number'])
+      this.axios.get('http://localhost/api/deleteDetails.php', {
+        params: {
+          srno: row.item['serial number'],
+          tbNam: 'order details'
         }
       })
         .then((response) => {
@@ -87,7 +144,7 @@ export default {
         })
     }
   },
-  beforeMount () {
+  beforeMount () { // display before mounting
     this.allRecords()
   }
 }
