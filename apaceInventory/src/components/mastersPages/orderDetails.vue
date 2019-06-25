@@ -8,6 +8,7 @@
                 <p class="card-text" id="addForm">
                   <b-form inline>
                     <label class="sr-only" for="inline-form-suborder-id">Suborder id</label>
+                    Suborder id: &nbsp;
                     <b-input
                       id="inline-form-suborder-id"
                       class="mb-2 mr-sm-2 mb-sm-0"
@@ -16,6 +17,7 @@
                     ></b-input>
 
                     <label class="sr-only" for="inline-form-size">Size</label>
+                    Size: &nbsp;
                     <b-input
                       id="inline-form-size"
                       class="mb-2 mr-sm-2 mb-sm-0"
@@ -24,6 +26,7 @@
                     ></b-input>
 
                     <label class="sr-only" for="inline-form-quantity">Quantity</label>
+                    Quantity: &nbsp;
                     <b-input
                       id="inline-form-quantity"
                       class="mb-2 mr-sm-2 mb-sm-0"
@@ -37,20 +40,22 @@
                 <b-button variant="success" @click="pushOrderDetails">add record</b-button>
                 </b-card>
             </b-collapse>
+          </div>
 
-        <!-- display the table -->
-        </div>
+      <!-- display the table -->
+
         <div id="tableDisplay">
          <b-table class="small" striped hover
          :items="items"
          :fields="fields"
-         @row-clicked="rowClicked">
+         >
+        <!-- @row-clicked="rowClicked" -->
 
             <!-- buttons for delete and update
             slot-scope row used to access particular row-->
             <template slot="delete / update" slot-scope="row">
-              <b-button size="sm" @click="deleteClicked(row)" class="mr-2">Delete</b-button>
-              <b-button size="sm" @click="row.toggleDetails" class="mr-2">
+              <b-button size="sm" @click="deleteClicked(row)" class="mr-2" variant="danger">Delete</b-button>
+              <b-button size="sm" @click="row.toggleDetails" class="mr-2" variant="info">
                 {{ row.detailsShowing ? 'Hide' : 'Update'}}
               </b-button>
             </template>
@@ -108,7 +113,7 @@ export default {
     },
     // to add data in the table
     pushOrderDetails: function () {
-      this.axios.get('http://localhost/api/pushDetails.php', {
+      this.axios.get('http://localhost/api/push/pushDetails.php', {
         params: {
           subid: this.inputs.subid, // send data to be added in the table
           size: this.inputs.size,
@@ -123,12 +128,11 @@ export default {
         })
     },
     // after row click
-    rowClicked: function (record, index) {
-      console.log(record['serial number'] + index)
-    },
+    // rowClicked: function (record, index) {
+    //   console.log(record['serial number'] + index)
+    // },
     // after delete button clicked
     deleteClicked: function (row) {
-      console.log(row.item['serial number'])
       this.axios.get('http://localhost/api/deleteDetails.php', {
         params: {
           srno: row.item['serial number'],
@@ -136,7 +140,6 @@ export default {
         }
       })
         .then((response) => {
-          console.log(response)
           this.allRecords()
         })
         .catch(function (error) {

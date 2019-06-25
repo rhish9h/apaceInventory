@@ -6,7 +6,7 @@
     header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control");
     
     if ($_SERVER['REQUEST_METHOD'] === 'GET') { //post not working, so used get
-        include 'config.php';
+        include '../config.php';
 
         $subid = $_GET['subid'] ?? '';
         $size = $_GET['size']  ?? '';
