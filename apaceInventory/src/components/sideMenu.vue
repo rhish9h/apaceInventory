@@ -12,9 +12,11 @@
             </div>
         </div>
         <div class="displaypage">
-            <keep-alive>
+            <div class="container-fluid">
+              <keep-alive>
                 <component :is="componentSelect"></component>
-            </keep-alive>
+              </keep-alive>
+            </div>
         </div>
     </div>
 </template>
@@ -74,6 +76,7 @@ export default {
     .menuOption {
         padding: 1em;
         background-color:  #cacaca73;
+        text-align: center;
     }
     .sideContainer > div:hover {
         background-color:  #adadada8;
