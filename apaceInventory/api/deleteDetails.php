@@ -1,5 +1,6 @@
 <?php
-    //push data into the orders tables
+    //one script to delete particular row form particular table
+    //inputs: table name & serial number
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Credentials: true ");
     header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
@@ -8,11 +9,10 @@
     if ($_SERVER['REQUEST_METHOD'] === 'GET') { //post not working, so used get
         include 'config.php';
 
-        $subid = $_GET['subid'] ?? '';
-        $size = $_GET['size']  ?? '';
-        $quant = $_GET['quant']  ?? '';
+        $srno = $_GET['srno'] ?? ''; // empty if get doesn't have the variable
+        $tbNam = $_GET['tbNam'] ?? '';
 
-        $query = "INSERT INTO `order details` (`serial number`, `suborder id`, `size`, `quantity`) VALUES (NULL, '$subid', '$size', '$quant')";
+        $query = "DELETE FROM `$tbNam` WHERE `$tbNam`.`serial number` = $srno";
 
         $userData = mysqli_query($conn, $query);
         
