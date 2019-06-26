@@ -101,10 +101,14 @@ export default {
     },
     // add data in the uom master table
     pushVendTypeMast: function () {
-      this.axios.get('http://localhost/api/push/pushVendTypeMast.php', {
+      this.axios.get('http://localhost/api/pushData.php', {
+        // send actual table name and fields along with input data
         params: {
-          vendType: this.inputs.vendType,
-          active: this.inputs.active
+          tableName: 'vendor type master',
+          fieldValues: JSON.stringify([
+            ['vendor type', this.inputs.vendType],
+            ['active', this.inputs.active]
+          ])
         }
       })
         .then((response) => {

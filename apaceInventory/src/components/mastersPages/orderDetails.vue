@@ -116,11 +116,15 @@ export default {
     },
     // to add data in the table
     pushOrderDetails: function () {
-      this.axios.get('http://localhost/api/push/pushDetails.php', {
+      this.axios.get('http://localhost/api/pushData.php', {
+        // send actual table name and fields along with input data
         params: {
-          subid: this.inputs.subid, // send data to be added in the table
-          size: this.inputs.size,
-          quant: this.inputs.quant
+          tableName: 'order details',
+          fieldValues: JSON.stringify([
+            ['suborder id', this.inputs.subid],
+            ['size', this.inputs.size],
+            ['quantity', this.inputs.quant]
+          ])
         }
       })
         .then((response) => {

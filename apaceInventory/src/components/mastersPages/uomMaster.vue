@@ -101,10 +101,14 @@ export default {
     },
     // add data in the uom master table
     pushUom: function () {
-      this.axios.get('http://localhost/api/push/pushUom.php', {
+      this.axios.get('http://localhost/api/pushData.php', {
+        // send actual table name and fields along with input data
         params: {
-          uom: this.inputs.uom,
-          active: this.inputs.active
+          tableName: 'uom master',
+          fieldValues: JSON.stringify([
+            ['uom', this.inputs.uom],
+            ['active', this.inputs.active]
+          ])
         }
       })
         .then((response) => {
