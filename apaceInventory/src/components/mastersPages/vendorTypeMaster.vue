@@ -1,3 +1,6 @@
+// vendor type master table
+// folder: mastersPages
+
 <template>
     <div>
         <!-- add record into the table -->
@@ -35,7 +38,7 @@
 
         <!-- display table -->
         <div id="vendTypeMastTable">
-            <b-table class="small small" striped hover :items="items" :fields="fields">
+            <b-table class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked">
                 <!-- buttons for delete and update
                 slot-scope row used to access particular row-->
                 <template slot="delete / update" slot-scope="row">
@@ -126,7 +129,9 @@ export default {
         .catch(function (error) {
           console.log(error)
         })
-    }
+    },
+    // after row is clicked in the table
+    rowClicked: function () {}
   },
   beforeMount () { // before mounting of vue
     this.allRecords()

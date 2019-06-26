@@ -54,7 +54,7 @@ import orderDetails from './mastersPages/orderDetails.vue'
 import materialTypeMaster from './mastersPages/materialTypeMaster.vue'
 import productMaster from './mastersPages/productMaster.vue'
 import uomMaster from './mastersPages/uomMaster.vue'
-import vendorMaster from './mastersPages/vendorMaser.vue'
+import vendorMaster from './mastersPages/vendorMaster.vue'
 import vendorTypeMaster from './mastersPages/vendorTypeMaster.vue'
 
 export default {

@@ -1,3 +1,6 @@
+// order details table
+//folder: mastersPages
+
 <template>
     <div>
       <!-- add record into the table -->
@@ -48,8 +51,8 @@
          <b-table class="small" striped hover
          :items="items"
          :fields="fields"
+         @row-clicked="rowClicked"
          >
-        <!-- @row-clicked="rowClicked" -->
 
             <!-- buttons for delete and update
             slot-scope row used to access particular row-->
@@ -128,9 +131,9 @@ export default {
         })
     },
     // after row click
-    // rowClicked: function (record, index) {
-    //   console.log(record['serial number'] + index)
-    // },
+    rowClicked: function (record, index) {
+      // console.log(record['serial number'] + index)
+    },
     // after delete button clicked
     deleteClicked: function (row) {
       this.axios.get('http://localhost/api/deleteDetails.php', {

@@ -1,7 +1,10 @@
+// vendor master table
+// folder: mastersPage
+
 <template>
     <div>
         <div id="vendMastTable">
-            <b-table class="small small" striped hover :items="items"></b-table>
+            <b-table class="small small" striped hover :items="items" @row-clicked="rowClicked"></b-table>
         </div>
     </div>
 </template>
@@ -16,6 +19,7 @@ export default {
     }
   },
   methods: {
+    // display vendor master table
     allRecords: function () {
       this.axios.get('http://localhost/api/displayTable.php', {
         params: {
@@ -28,8 +32,11 @@ export default {
         .catch(function (error) {
           console.log(error)
         })
-    }
+    },
+    // after row of table is clicked
+    rowClicked: function () {}
   },
+  // display table before vue is mounted
   beforeMount () {
     this.allRecords()
   }
