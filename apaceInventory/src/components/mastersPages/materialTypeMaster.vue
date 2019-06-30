@@ -3,6 +3,13 @@
 
 <template>
     <div>
+        <!-- add record into the table -->
+        <div id="addRecordInMatTypeMast">
+          <!-- on add row - display table again -->
+          <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="material type master"></add-row>
+        </div>
+
+        <!-- display table vendor master -->
         <div id="matTypeMastTable">
             <b-table class="small small" striped hover :items="items" @row-clicked="rowClicked"></b-table>
         </div>
@@ -10,12 +17,18 @@
 </template>
 
 <script>
+import addRow from '../tableManip/addRow'
+
 export default {
   name: 'materialTypeMaster',
   data () {
     return {
       compTitle: 'Material Type Master',
-      items: []
+      items: [],
+      inputs: {
+        'material type': ['', 'text'],
+        active: [1, 'number']
+      }
     }
   },
   methods: {
@@ -39,6 +52,9 @@ export default {
   // display table before mounting vue
   beforeMount () {
     this.allRecords()
+  },
+  components: {
+    'add-row': addRow // register add row component
   }
 }
 </script>

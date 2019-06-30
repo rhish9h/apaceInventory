@@ -3,6 +3,13 @@
 
 <template>
     <div>
+        <!-- add record into the table -->
+        <div id="addRecordInVendMast">
+          <!-- on add row - display table again -->
+          <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="vendor master"></add-row>
+        </div>
+
+        <!-- display table vendor master -->
         <div id="vendMastTable">
             <b-table class="small small" striped hover :items="items" @row-clicked="rowClicked"></b-table>
         </div>
@@ -10,12 +17,25 @@
 </template>
 
 <script>
+import addRow from '../tableManip/addRow'
+
 export default {
   name: 'vendorMaster',
   data () {
     return {
       compTitle: 'Vendor Master',
-      items: []
+      items: [],
+      inputs: {
+        'vendor type': ['', 'text'],
+        'vendor name': ['', 'text'],
+        'vendor address': ['', 'text'],
+        'vendor contact': ['', 'number'],
+        'vendor email': ['', 'text'],
+        'vendor gst#': ['', 'text'],
+        'vendor pan#': ['', 'text'],
+        other: ['', 'text'],
+        active: [1, 'number']
+      }
     }
   },
   methods: {
@@ -39,6 +59,9 @@ export default {
   // display table before vue is mounted
   beforeMount () {
     this.allRecords()
+  },
+  components: {
+    'add-row': addRow // register add row component
   }
 }
 </script>

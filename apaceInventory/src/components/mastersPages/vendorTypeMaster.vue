@@ -4,36 +4,9 @@
 <template>
     <div>
         <!-- add record into the table -->
-        <div id="addRecord">
-            <b-button v-b-toggle.collapse-1 variant="primary">Add</b-button>
-            <b-collapse id="collapse-1" class="mt-2">
-                <b-card>
-                <p class="card-text" id="addForm">
-                  <b-form inline>
-                    <label class="sr-only" for="inline-form-vendType">vendType</label>
-                    Vendor Type: &nbsp;
-                    <b-input
-                      id="inline-form-vendType"
-                      class="mb-2 mr-sm-2 mb-sm-0"
-                      placeholder="Vendor Type"
-                      v-model="inputs.vendType"
-                    ></b-input>
-
-                    <label class="sr-only" for="inline-form-active">active</label>
-                    Active: &nbsp;
-                    <b-input
-                      id="inline-form-active"
-                      class="mb-2 mr-sm-2 mb-sm-0"
-                      placeholder="Active"
-                      v-model="inputs.active"
-                      type="number"
-                    ></b-input>
-
-                  </b-form>
-                </p>
-                <b-button variant="success" @click="pushVendTypeMast">add record</b-button>
-                </b-card>
-            </b-collapse>
+        <div id="addRecordInVendTypeMast">
+          <!-- on add row - display table again -->
+          <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="vendor type master"></add-row>
         </div>
 
         <!-- display table -->
@@ -71,6 +44,8 @@
 </template>
 
 <script>
+import addRow from '../tableManip/addRow'
+
 export default {
   name: 'vendorMaster',
   data () {
@@ -79,8 +54,8 @@ export default {
       fields: ['delete / update', 's. no.', 'vendor type', 'active'],
       items: [],
       inputs: {
-        vendType: '',
-        active: 1
+        'vendor type': ['', 'text'],
+        active: [1, 'number']
       }
     }
   },
@@ -139,6 +114,9 @@ export default {
   },
   beforeMount () { // before mounting of vue
     this.allRecords()
+  },
+  components: {
+    'add-row': addRow
   }
 }
 </script>

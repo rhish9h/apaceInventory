@@ -4,46 +4,10 @@
 <template>
     <div>
       <!-- add record into the table -->
-        <div id="addRecord">
-            <b-button v-b-toggle.collapse-1 variant="primary">Add</b-button>
-            <b-collapse id="collapse-1" class="mt-2">
-                <b-card>
-                <p class="card-text" id="addForm">
-                  <b-form inline>
-                    <label class="sr-only" for="inline-form-suborder-id">Suborder id</label>
-                    Suborder id: &nbsp;
-                    <b-input
-                      id="inline-form-suborder-id"
-                      class="mb-2 mr-sm-2 mb-sm-0"
-                      placeholder="Suborder id"
-                      v-model="inputs.subid"
-                    ></b-input>
-
-                    <label class="sr-only" for="inline-form-size">Size</label>
-                    Size: &nbsp;
-                    <b-input
-                      id="inline-form-size"
-                      class="mb-2 mr-sm-2 mb-sm-0"
-                      placeholder="Size"
-                      v-model="inputs.size"
-                    ></b-input>
-
-                    <label class="sr-only" for="inline-form-quantity">Quantity</label>
-                    Quantity: &nbsp;
-                    <b-input
-                      id="inline-form-quantity"
-                      class="mb-2 mr-sm-2 mb-sm-0"
-                      placeholder="Quantity"
-                      type="number"
-                      v-model="inputs.quant"
-                    ></b-input>
-
-                  </b-form>
-                </p>
-                <b-button variant="success" @click="pushOrderDetails">add record</b-button>
-                </b-card>
-            </b-collapse>
-          </div>
+        <div id="addRecordInOrderDetails">
+          <!-- on add row - display table again -->
+          <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="order details"></add-row>
+        </div>
 
       <!-- display the table -->
 
@@ -86,6 +50,8 @@
 </template>
 
 <script>
+import addRow from '../tableManip/addRow'
+
 export default {
   name: 'orderDetails',
   data () {
@@ -93,9 +59,9 @@ export default {
       fields: ['delete / update', 'serial number', 'suborder id', 'size', 'quantity'],
       items: [],
       inputs: {
-        subid: '',
-        size: '',
-        quant: ''
+        'suborder id': ['', 'text'],
+        size: ['', 'text'],
+        quantity: ['', 'number']
       }
     }
   },
@@ -109,26 +75,6 @@ export default {
       })
         .then((response) => {
           this.items = response.data
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
-    },
-    // to add data in the table
-    pushOrderDetails: function () {
-      this.axios.get('http://localhost/api/pushData.php', {
-        // send actual table name and fields along with input data
-        params: {
-          tableName: 'order details',
-          fieldValues: JSON.stringify([
-            ['suborder id', this.inputs.subid],
-            ['size', this.inputs.size],
-            ['quantity', this.inputs.quant]
-          ])
-        }
-      })
-        .then((response) => {
-          this.allRecords() // display table again after addition
         })
         .catch(function (error) {
           console.log(error)
@@ -156,6 +102,9 @@ export default {
   },
   beforeMount () { // display before mounting
     this.allRecords()
+  },
+  components: {
+    'add-row': addRow // register component to add row
   }
 }
 </script>

@@ -3,37 +3,10 @@
 
 <template>
     <div>
-      <!-- add record into the table -->
-        <div id="addRecord">
-            <b-button v-b-toggle.collapse-1 variant="primary">Add</b-button>
-            <b-collapse id="collapse-1" class="mt-2">
-                <b-card>
-                <p class="card-text" id="addForm">
-                  <b-form inline>
-                    <label class="sr-only" for="inline-form-uom">uom</label>
-                    Uom: &nbsp;
-                    <b-input
-                      id="inline-form-uom"
-                      class="mb-2 mr-sm-2 mb-sm-0"
-                      placeholder="Uom"
-                      v-model="inputs.uom"
-                    ></b-input>
-
-                    <label class="sr-only" for="inline-form-active">active</label>
-                    Active: &nbsp;
-                    <b-input
-                      id="inline-form-active"
-                      class="mb-2 mr-sm-2 mb-sm-0"
-                      placeholder="Active"
-                      v-model="inputs.active"
-                      type="number"
-                    ></b-input>
-
-                  </b-form>
-                </p>
-                <b-button variant="success" @click="pushUom">add record</b-button>
-                </b-card>
-            </b-collapse>
+        <!-- add record into the table -->
+        <div id="addRecordInUomMast">
+          <!-- on add row - display table again -->
+          <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="uom master"></add-row>
         </div>
 
         <!-- display table -->
@@ -71,6 +44,8 @@
 </template>
 
 <script>
+import addRow from '../tableManip/addRow'
+
 export default {
   name: 'uomMaster',
   data () {
@@ -79,8 +54,8 @@ export default {
       fields: ['delete / update', 'serial number', 'uom', 'active'],
       items: [],
       inputs: {
-        uom: '',
-        active: 1
+        uom: ['', 'text'],
+        active: [1, 'number']
       }
     }
   },
@@ -94,25 +69,6 @@ export default {
       })
         .then((response) => {
           this.items = response.data
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
-    },
-    // add data in the uom master table
-    pushUom: function () {
-      this.axios.get('http://localhost/api/pushData.php', {
-        // send actual table name and fields along with input data
-        params: {
-          tableName: 'uom master',
-          fieldValues: JSON.stringify([
-            ['uom', this.inputs.uom],
-            ['active', this.inputs.active]
-          ])
-        }
-      })
-        .then((response) => {
-          this.allRecords()
         })
         .catch(function (error) {
           console.log(error)
@@ -138,6 +94,9 @@ export default {
   },
   beforeMount () { // display table before vue is mounted
     this.allRecords()
+  },
+  components: {
+    'add-row': addRow // register add row component
   }
 }
 </script>
