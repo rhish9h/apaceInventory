@@ -21,7 +21,8 @@
             <!-- buttons for delete and update
             slot-scope row used to access particular row-->
             <template slot="delete / update" slot-scope="row">
-              <b-button size="sm" @click="deleteClicked(row)" class="mr-2" variant="danger">Delete</b-button>
+              <!-- delete row component, send row and table name -->
+              <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="order details"></delete-row>
               <b-button size="sm" @click="row.toggleDetails" class="mr-2" variant="info">
                 {{ row.detailsShowing ? 'Hide' : 'Update'}}
               </b-button>
@@ -51,6 +52,7 @@
 
 <script>
 import addRow from '../tableManip/addRow'
+import delRow from '../tableManip/deleteRow'
 
 export default {
   name: 'orderDetails',
@@ -83,28 +85,14 @@ export default {
     // after row click
     rowClicked: function (record, index) {
       // console.log(record['serial number'] + index)
-    },
-    // after delete button clicked
-    deleteClicked: function (row) {
-      this.axios.get('http://localhost/api/deleteDetails.php', {
-        params: {
-          srno: row.item['serial number'],
-          tbNam: 'order details'
-        }
-      })
-        .then((response) => {
-          this.allRecords()
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
     }
   },
   beforeMount () { // display before mounting
     this.allRecords()
   },
   components: {
-    'add-row': addRow // register component to add row
+    'add-row': addRow, // register component to add row
+    'delete-row': delRow
   }
 }
 </script>

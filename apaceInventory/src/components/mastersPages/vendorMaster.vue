@@ -11,13 +11,21 @@
 
         <!-- display table vendor master -->
         <div id="vendMastTable">
-            <b-table class="small small" striped hover :items="items" @row-clicked="rowClicked"></b-table>
+            <b-table class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked">
+
+                <template slot="delete" slot-scope="row">
+                  <!-- delete row component, send row and table name -->
+                  <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="vendor master"></delete-row>
+                </template>
+
+            </b-table>
         </div>
     </div>
 </template>
 
 <script>
 import addRow from '../tableManip/addRow'
+import delRow from '../tableManip/deleteRow'
 
 export default {
   name: 'vendorMaster',
@@ -35,7 +43,8 @@ export default {
         'vendor pan#': ['', 'text'],
         other: ['', 'text'],
         active: [1, 'number']
-      }
+      },
+      fields: ['delete', 'vendor id', 'vendor type', 'vendor name', 'contact', 'active']
     }
   },
   methods: {
@@ -61,7 +70,8 @@ export default {
     this.allRecords()
   },
   components: {
-    'add-row': addRow // register add row component
+    'add-row': addRow, // register add row component
+    'delete-row': delRow
   }
 }
 </script>
