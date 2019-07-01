@@ -6,9 +6,8 @@
         <!-- add record into the table -->
         <div id="addRecordInMatMast">
           <!-- on add row - display table again -->
-          <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="material master"></add-row>
+          <add-row @rowPushed="allRecords" :maxSNo='maxSNo'></add-row>
         </div>
-
         <div id="matMastTable">
             <b-table class="small small" striped hover :items="items" :fields="fields" :per-page=10 @row-clicked="rowClicked">
               <template slot="delete" slot-scope="row">
@@ -23,7 +22,7 @@
 </template>
 
 <script>
-import addRow from '../tableManip/addRow'
+import addRow from '../tableManip/addRowFolder/addMatMast'
 import delRow from '../tableManip/deleteRow'
 
 export default {
@@ -65,6 +64,13 @@ export default {
   components: {
     'add-row': addRow, // register add row component
     'delete-row': delRow
+  },
+  computed: {
+    maxSNo: function () { // computing max serial number, to be passed as a prop
+      if (this.items.length > 0) {
+        return this.items[this.items.length - 1]['serial number']
+      }
+    }
   }
 }
 </script>
