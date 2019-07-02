@@ -9,7 +9,7 @@
           <add-row @rowPushed="allRecords" :maxSNo='maxSNo'></add-row>
         </div>
         <div id="matMastTable">
-            <b-table class="small small" striped hover :items="items" :fields="fields" :per-page=10 @row-clicked="rowClicked">
+            <b-table class="small small" striped hover :items="items" :fields="fields" :per-page=10 @row-clicked="rowClicked" small=true>
               <template slot="delete" slot-scope="row">
 
                   <!-- delete row component, send row and table name -->
@@ -31,11 +31,6 @@ export default {
     return {
       compTitle: 'Material Master',
       items: [],
-      inputs: {
-        'material id': ['', 'text'],
-        'material type': ['', 'text'],
-        'material code': ['', 'text']
-      },
       fields: ['delete', 'serial number', 'material id', 'material code', 'unit of measurement - purchase', 'uom conversion', 'active', 'lead time to reorder']
     }
   },

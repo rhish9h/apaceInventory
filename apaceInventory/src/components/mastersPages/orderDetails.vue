@@ -12,36 +12,19 @@
       <!-- display the table -->
 
         <div id="tableDisplay">
-         <b-table class="small" striped hover
-         :items="items"
-         :fields="fields"
-         @row-clicked="rowClicked"
-         >
+         <b-table class="small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
 
             <!-- buttons for delete and update
             slot-scope row used to access particular row-->
-            <template slot="delete / update" slot-scope="row">
+            <template slot="delete" slot-scope="row">
               <!-- delete row component, send row and table name -->
               <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="order details"></delete-row>
-              <b-button size="sm" @click="row.toggleDetails" class="mr-2" variant="info">
-                {{ row.detailsShowing ? 'Hide' : 'Update'}}
-              </b-button>
             </template>
 
             <!-- collapse for updation of row -->
             <template slot="row-details" slot-scope="row">
               <b-card>
-                <b-row class="mb-2">
-                  <b-col sm="3" class="text-sm-right"><b>Age:</b></b-col>
-                  <b-col>{{ row.item.age }}</b-col>
-                </b-row>
-
-                <b-row class="mb-2">
-                  <b-col sm="3" class="text-sm-right"><b>Is Active:</b></b-col>
-                  <b-col>{{ row.item.isActive }}</b-col>
-                </b-row>
-
-                <b-button size="sm" @click="row.toggleDetails">Hide</b-button>
+                <update-row :row="row"></update-row>
               </b-card>
             </template>
 
@@ -53,12 +36,13 @@
 <script>
 import addRow from '../tableManip/addRow'
 import delRow from '../tableManip/deleteRow'
+import updRow from '../tableManip/updateRowFolder/updateOrderDetails'
 
 export default {
   name: 'orderDetails',
   data () {
     return {
-      fields: ['delete / update', 'serial number', 'suborder id', 'size', 'quantity'],
+      fields: ['delete', 'serial number', 'suborder id', 'size', 'quantity'],
       items: [],
       inputs: {
         'suborder id': ['', 'text'],
@@ -77,14 +61,18 @@ export default {
       })
         .then((response) => {
           this.items = response.data
+          this.addShowDetails()
         })
         .catch(function (error) {
           console.log(error)
         })
     },
     // after row click
-    rowClicked: function (record, index) {
-      // console.log(record['serial number'] + index)
+    rowClicked: function (row) { // toggle _showDetails property on rowClick - later used for update
+      row._showDetails = !row._showDetails
+    },
+    addShowDetails: function () { // add property _showDetails to every row of the table
+      this.items.forEach(function (element) { element._showDetails = false })
     }
   },
   beforeMount () { // display before mounting
@@ -92,7 +80,8 @@ export default {
   },
   components: {
     'add-row': addRow, // register component to add row
-    'delete-row': delRow
+    'delete-row': delRow,
+    'update-row': updRow
   }
 }
 </script>

@@ -11,7 +11,7 @@
 
         <!-- display table material type master -->
         <div id="matTypeMastTable">
-            <b-table class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked">
+            <b-table class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
 
               <template slot="delete" slot-scope="row">
                   <!-- delete row component, send row and table name -->

@@ -8,10 +8,11 @@
             <b-collapse id="collapse-1" class="mt-2">
                 <b-card>
                 <p class="card-text" id="addForm">
+                  <span style="font-size: 1.5em">
                   material id: {{ this['material id'] }}
                   <br/>
                   material code: {{ this['material code']}}
-                  <br><br>
+                  <br></span>
                   <b-form inline>
 
                     <label class="sr-only" for="id-material-type">material type</label>

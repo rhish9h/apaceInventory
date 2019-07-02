@@ -11,7 +11,7 @@
 
         <!-- display table -->
         <div id="vendTypeMastTable">
-            <b-table class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked">
+            <b-table class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
 
                 <!-- buttons for delete -- slot-scope row used to access particular row-->
                 <template slot="delete" slot-scope="row">
