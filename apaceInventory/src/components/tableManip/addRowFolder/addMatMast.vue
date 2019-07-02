@@ -9,6 +9,9 @@
                 <b-card>
                 <p class="card-text" id="addForm">
                   material id: {{ this['material id'] }}
+                  <br/>
+                  material code: {{ this['material code']}}
+                  <br><br>
                   <b-form inline>
 
                     <label class="sr-only" for="id-material-type">material type</label>
@@ -101,13 +104,13 @@
 
                     <label class="sr-only" for="id-min-order-quant">min order quant</label>
                     min order quant:  &nbsp;
-                    <b-input id="id-min-order-quant" class="mb-2 mr-sm-2 mb-sm-1" placeholder="min order quant" v-model="inputs['minimum order quantity']">
+                    <b-input id="id-min-order-quant" class="mb-2 mr-sm-2 mb-sm-1" placeholder="min order quant" v-model="inputs['minimum order quantity']" type="number">
                         {{ inputs['minimum order quantity'] }}
                     </b-input>
 
                     <label class="sr-only" for="id-safety-stock">safety stock</label>
                     safety stock:  &nbsp;
-                    <b-input id="id-safety-stock" class="mb-2 mr-sm-2 mb-sm-1" placeholder="safety stock" v-model="inputs['safety stock/reorder level']">
+                    <b-input id="id-safety-stock" class="mb-2 mr-sm-2 mb-sm-1" placeholder="safety stock" v-model="inputs['safety stock/reorder level']" type="number">
                         {{ inputs['safety stock/reorder level'] }}
                     </b-input>
 
@@ -197,6 +200,7 @@ export default {
         fVal.push(temp)
       }
       fVal.push(['material id', this['material id']])
+      fVal.push(['material code', this['material code']])
       this.axios.get('http://localhost/api/pushData.php', {
         // send actual table name and fields along with input data
         params: {
@@ -217,6 +221,31 @@ export default {
       if (this.inputs['material type'].length > 0) {
         return (this.inputs['material type'][0].toUpperCase() + (parseInt(this.maxSNo) + 1))
       }
+    },
+    'material code': function () {
+      let code = ''
+      if (this.inputs['material type'].length > 0) {
+        code = this.inputs['material type']
+      }
+      if (this.inputs['main attrib1'].length > 0) {
+        code += '-' + this.inputs['main attrib1']
+      }
+      if (this.inputs['main attrib2'].length > 0) {
+        code += '-' + this.inputs['main attrib2']
+      }
+      if (this.inputs['main attrib3'].length > 0) {
+        code += '-' + this.inputs['main attrib3']
+      }
+      if (this.inputs['main attrib4'].length > 0) {
+        code += '-' + this.inputs['main attrib4']
+      }
+      if (this.inputs['main attrib5'].length > 0) {
+        code += '-' + this.inputs['main attrib5']
+      }
+      if (this.inputs['vendor name'].length > 0) {
+        code += '-' + this.inputs['vendor name']
+      }
+      return code
     }
   }
 }
