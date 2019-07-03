@@ -24,7 +24,7 @@
             <!-- collapse for updation of row -->
             <template slot="row-details" slot-scope="row">
               <b-card>
-                <update-row :row="row"></update-row>
+                <update-row :rowProp="row" tableNameProp="order details" :updateFieldsProp="updateFields" @rowUpdated="allRecords"></update-row>
               </b-card>
             </template>
 
@@ -36,7 +36,7 @@
 <script>
 import addRow from '../tableManip/addRow'
 import delRow from '../tableManip/deleteRow'
-import updRow from '../tableManip/updateRowFolder/updateOrderDetails'
+import updRow from '../tableManip/updateRow'
 
 export default {
   name: 'orderDetails',
@@ -48,7 +48,8 @@ export default {
         'suborder id': ['', 'text'],
         size: ['', 'text'],
         quantity: ['', 'number']
-      }
+      },
+      updateFields: [['size', 'text'], ['quantity', 'number']]
     }
   },
   methods: {
@@ -61,7 +62,7 @@ export default {
       })
         .then((response) => {
           this.items = response.data
-          this.addShowDetails()
+          this.addShowDetails() // call to add show details property to every row
         })
         .catch(function (error) {
           console.log(error)

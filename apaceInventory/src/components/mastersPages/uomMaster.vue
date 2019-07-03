@@ -19,6 +19,13 @@
                     <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="uom master"></delete-row>
                 </template>
 
+            <!-- collapse for updation of row -->
+            <template slot="row-details" slot-scope="row">
+              <b-card>
+                <update-row :rowProp="row" tableNameProp="uom master" :updateFieldsProp="updateFields" @rowUpdated="allRecords"></update-row>
+              </b-card>
+            </template>
+
             </b-table>
         </div>
     </div>
@@ -27,6 +34,7 @@
 <script>
 import addRow from '../tableManip/addRow'
 import delRow from '../tableManip/deleteRow'
+import updRow from '../tableManip/updateRow'
 
 export default {
   name: 'uomMaster',
@@ -38,7 +46,8 @@ export default {
       inputs: {
         uom: ['', 'text'],
         active: [1, 'number']
-      }
+      },
+      updateFields: [['uom', 'text'], ['active', 'number']]
     }
   },
   methods: {
@@ -51,20 +60,27 @@ export default {
       })
         .then((response) => {
           this.items = response.data
+          this.addShowDetails() // call to add show details property to every row
         })
         .catch(function (error) {
           console.log(error)
         })
     },
-    // after row of table is clicked
-    rowClicked: function () {}
+    // after row click
+    rowClicked: function (row) { // toggle _showDetails property on rowClick - later used for update
+      row._showDetails = !row._showDetails
+    },
+    addShowDetails: function () { // add property _showDetails to every row of the table
+      this.items.forEach(function (element) { element._showDetails = false })
+    }
   },
   beforeMount () { // display table before vue is mounted
     this.allRecords()
   },
   components: {
     'add-row': addRow, // register add row component
-    'delete-row': delRow
+    'delete-row': delRow,
+    'update-row': updRow
   }
 }
 </script>
