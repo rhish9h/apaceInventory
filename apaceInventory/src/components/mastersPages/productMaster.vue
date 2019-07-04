@@ -18,6 +18,13 @@
                   <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="product master"></delete-row>
                 </template>
 
+                 <!-- collapse for updation of row -->
+              <template slot="row-details" slot-scope="row">
+                <b-card>
+                  <update-row :rowProp="row" tableNameProp="product master" :updateFieldsProp="updateFields" @rowUpdated="allRecords"></update-row>
+                </b-card>
+              </template>
+
             </b-table>
         </div>
     </div>
@@ -26,6 +33,7 @@
 <script>
 import addRow from '../tableManip/addRow'
 import delRow from '../tableManip/deleteRow'
+import updRow from '../tableManip/updateRow'
 
 export default {
   name: 'productMaster',
@@ -39,12 +47,23 @@ export default {
         pattern: ['', 'text'],
         active: [1, 'number']
       },
-      items: []
+      items: [],
+      updateFields: [
+        ['product', 'text'],
+        ['gender', 'text'],
+        ['pattern', 'text'],
+        ['active', 'number']
+      ]
     }
   },
   methods: {
-    // after clicking row of table
-    rowClicked: function () {},
+    // after row click
+    rowClicked: function (row) { // toggle _showDetails property on rowClick - later used for update
+      row._showDetails = !row._showDetails
+    },
+    addShowDetails: function () { // add property _showDetails to every row of the table
+      this.items.forEach(function (element) { element._showDetails = false })
+    },
     // display product master table
     allRecords: function () {
       this.axios.get('http://localhost/api/displayTable.php', {
@@ -54,6 +73,7 @@ export default {
       })
         .then((response) => {
           this.items = response.data
+          this.addShowDetails()
         })
         .catch(function (error) {
           console.log(error)
@@ -67,7 +87,8 @@ export default {
   // declare components
   components: {
     'add-row': addRow,
-    'delete-row': delRow
+    'delete-row': delRow,
+    'update-row': updRow
   }
 }
 </script>

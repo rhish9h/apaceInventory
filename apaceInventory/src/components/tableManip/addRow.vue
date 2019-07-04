@@ -15,7 +15,7 @@
                         {{ name }}: &nbsp;
                         <b-input
                         :id="`inline-form-${name}`"
-                        class="mb-2 mr-sm-2 mb-sm-0"
+                        class="mb-2 mr-sm-2 mb-sm-1"
                         :placeholder="`${name}`"
                         v-model="inputs[name][0]"
                         :type="inputs[name][1]"

@@ -15,6 +15,13 @@
                   <!-- delete row component, send row and table name -->
                   <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="material master"></delete-row>
 
+                   <!-- collapse for updation of row -->
+                  <template slot="row-details" slot-scope="row">
+                    <b-card>
+                      <update-row :rowProp="row" tableNameProp="material master" :updateFieldsProp="updateFields" @rowUpdated="allRecords"></update-row>
+                    </b-card>
+                  </template>
+
                 </template>
             </b-table>
         </div>
@@ -24,6 +31,7 @@
 <script>
 import addRow from '../tableManip/addRowFolder/addMatMast'
 import delRow from '../tableManip/deleteRow'
+import updRow from '../tableManip/updateRow'
 
 export default {
   name: 'materialMaster',
@@ -31,7 +39,28 @@ export default {
     return {
       compTitle: 'Material Master',
       items: [],
-      fields: ['delete', 'serial number', 'material id', 'material code', 'unit of measurement - purchase', 'uom conversion', 'active', 'lead time to reorder']
+      fields: ['delete', 'serial number', 'material id', 'material code', 'unit of measurement - purchase', 'uom conversion', 'active', 'lead time to reorder'],
+      updateFields: [
+        ['material type', 'text'],
+        ['unit of measurement - purchase', 'text'],
+        ['unit of measurement - usage', 'text'],
+        ['uom conversion', 'number'],
+        ['main attrib1', 'text'],
+        ['main attrib2', 'text'],
+        ['main attrib3', 'text'],
+        ['main attrib4', 'text'],
+        ['main attrib5', 'text'],
+        ['vendor id', 'number'],
+        ['vendor name', 'text'],
+        ['active', 'number'],
+        ['minimum order quantity', 'number'],
+        ['safety stock/reorder level', 'number'],
+        ['attrib1', 'text'],
+        ['attrib2', 'text'],
+        ['attrib3', 'text'],
+        ['attrib4', 'text'],
+        ['attrib5', 'text']
+      ]
     }
   },
   methods: {
@@ -44,13 +73,20 @@ export default {
       })
         .then((response) => {
           this.items = response.data
+          this.addShowDetails()
         })
         .catch(function (error) {
           console.log(error)
         })
     },
-    // after clicking row of table
-    rowClicked: function () {}
+    // after row click
+    rowClicked: function (row) { // toggle _showDetails property on rowClick - later used for update
+      row._showDetails = !row._showDetails
+      console.log('clicked')
+    },
+    addShowDetails: function () { // add property _showDetails to every row of the table
+      this.items.forEach(function (element) { element._showDetails = false })
+    }
   },
   // display every time before mounting vue
   beforeMount () {
@@ -58,7 +94,8 @@ export default {
   },
   components: {
     'add-row': addRow, // register add row component
-    'delete-row': delRow
+    'delete-row': delRow,
+    'update-row': updRow
   },
   computed: {
     maxSNo: function () { // computing max serial number, to be passed as a prop
