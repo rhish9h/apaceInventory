@@ -9,7 +9,17 @@
           <add-row @rowPushed="allRecords" :maxSNo='maxSNo'></add-row>
         </div>
         <div id="matMastTable">
-            <b-table class="small small" striped hover :items="items" :fields="fields" :per-page=10 @row-clicked="rowClicked" small=true>
+
+          <!-- pagination for the table -->
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            aria-controls="matTable"
+            class="ml-2"
+          ></b-pagination>
+
+            <b-table id="matTable" class="small small" :current-page="currentPage" striped hover :items="items" :fields="fields" :per-page="perPage" @row-clicked="rowClicked" small=true>
               <template slot="delete" slot-scope="row">
 
                   <!-- delete row component, send row and table name -->
@@ -64,7 +74,9 @@ export default {
         ['attrib3', 'text'],
         ['attrib4', 'text'],
         ['attrib5', 'text']
-      ]
+      ],
+      perPage: 10,
+      currentPage: 1
     }
   },
   methods: {
@@ -106,6 +118,9 @@ export default {
       if (this.items.length > 0) {
         return this.items[this.items.length - 1]['serial number']
       }
+    },
+    rows () { // get number of rows in the table used for pagination
+      return this.items.length
     }
   }
 }

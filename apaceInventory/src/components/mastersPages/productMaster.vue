@@ -11,7 +11,17 @@
 
       <!-- display table -->
         <div id="prodMastTable">
-            <b-table class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
+
+          <!-- pagination for the table -->
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            aria-controls="prodTable"
+            class="ml-2"
+          ></b-pagination>
+
+            <b-table id="prodTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
 
                 <template slot="delete" slot-scope="row">
                   <!-- delete row component, send row and table name -->
@@ -60,7 +70,9 @@ export default {
         ['gender', 'text'],
         ['pattern', 'text'],
         ['active', 'number']
-      ]
+      ],
+      perPage: 10,
+      currentPage: 1
     }
   },
   methods: {
@@ -96,6 +108,11 @@ export default {
     'add-row': addRow,
     'delete-row': delRow,
     'update-row': updRow
+  },
+  computed: {
+    rows () { // get number of rows in the table used for pagination
+      return this.items.length
+    }
   }
 }
 </script>

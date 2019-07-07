@@ -11,7 +11,17 @@
 
         <!-- display table -->
         <div id="vendTypeMastTable">
-            <b-table class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
+
+          <!-- pagination for the table -->
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            aria-controls="vendTypeTable"
+            class="ml-2"
+          ></b-pagination>
+
+            <b-table id="vendTypeTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
 
                 <!-- buttons for delete -- slot-scope row used to access particular row-->
                 <template slot="delete" slot-scope="row">
@@ -52,7 +62,9 @@ export default {
         'vendor type': ['', 'text'],
         active: [1, 'number']
       },
-      updateFields: [['vendor type', 'text'], ['active', 'number']]
+      updateFields: [['vendor type', 'text'], ['active', 'number']],
+      perPage: 10,
+      currentPage: 1
     }
   },
   methods: {
@@ -86,6 +98,11 @@ export default {
     'add-row': addRow,
     'delete-row': delRow,
     'update-row': updRow
+  },
+  computed: {
+    rows () { // get number of rows in the table used for pagination
+      return this.items.length
+    }
   }
 }
 </script>

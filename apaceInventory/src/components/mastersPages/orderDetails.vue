@@ -12,7 +12,17 @@
       <!-- display the table -->
 
         <div id="tableDisplay">
-         <b-table class="small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
+
+          <!-- pagination for the table -->
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            aria-controls="ordTable"
+            class="ml-2"
+          ></b-pagination>
+
+         <b-table id="ordTable" :per-page="perPage" :current-page="currentPage" class="small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
 
             <!-- buttons for delete and update
             slot-scope row used to access particular row-->
@@ -55,7 +65,9 @@ export default {
         size: ['', 'text'],
         quantity: ['', 'number']
       },
-      updateFields: [['size', 'text'], ['quantity', 'number']]
+      updateFields: [['size', 'text'], ['quantity', 'number']],
+      perPage: 10,
+      currentPage: 1
     }
   },
   methods: {
@@ -89,6 +101,11 @@ export default {
     'add-row': addRow, // register component to add row
     'delete-row': delRow,
     'update-row': updRow
+  },
+  computed: {
+    rows () { // get number of rows in the table used for pagination
+      return this.items.length
+    }
   }
 }
 </script>
