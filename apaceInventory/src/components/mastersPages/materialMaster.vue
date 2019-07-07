@@ -18,8 +18,10 @@
                    <!-- collapse for updation of row -->
                   <template slot="row-details" slot-scope="row">
                     <b-card>
-                      <update-row :rowProp="row" tableNameProp="material master" :updateFieldsProp="updateFields" @rowUpdated="allRecords"></update-row>
+                      <!-- <update-row :rowProp="row" tableNameProp="material master" :updateFieldsProp="updateFields" @rowUpdated="allRecords"></update-row> -->
+                      hello {{ row }}
                     </b-card>
+
                   </template>
 
                 </template>
@@ -39,19 +41,21 @@ export default {
     return {
       compTitle: 'Material Master',
       items: [],
-      fields: ['delete', 'serial number', 'material id', 'material code', 'unit of measurement - purchase', 'uom conversion', 'active', 'lead time to reorder'],
+      fields: [
+        {key: 'delete', sortable: false},
+        {key: 'serial number', sortable: true},
+        {key: 'material id', sortable: true},
+        {key: 'material code', sortable: true},
+        {key: 'unit of measurement - purchase', sortable: true},
+        {key: 'uom conversion', sortable: true},
+        {key: 'active', sortable: true},
+        {key: 'lead time to reorder', sortable: true}
+      ],
       updateFields: [
-        ['material type', 'text'],
         ['unit of measurement - purchase', 'text'],
         ['unit of measurement - usage', 'text'],
         ['uom conversion', 'number'],
-        ['main attrib1', 'text'],
-        ['main attrib2', 'text'],
-        ['main attrib3', 'text'],
-        ['main attrib4', 'text'],
-        ['main attrib5', 'text'],
         ['vendor id', 'number'],
-        ['vendor name', 'text'],
         ['active', 'number'],
         ['minimum order quantity', 'number'],
         ['safety stock/reorder level', 'number'],
@@ -82,7 +86,7 @@ export default {
     // after row click
     rowClicked: function (row) { // toggle _showDetails property on rowClick - later used for update
       row._showDetails = !row._showDetails
-      console.log('clicked')
+      console.log(row._showDetails)
     },
     addShowDetails: function () { // add property _showDetails to every row of the table
       this.items.forEach(function (element) { element._showDetails = false })

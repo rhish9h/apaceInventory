@@ -10,7 +10,7 @@
                 <p class="card-text" id="addForm">
                   <b-form inline>
                     <!-- iterate through inputs object and take inputs and save in same object -->
-                    <div v-for="(value, name) in inputs" :key="name">
+                    <div v-for="(value, name) in inputs" :key="name" class="col-md-4">
                         <label class="sr-only" :for="`inline-form-${name}`">{{ name }}</label>
                         {{ name }}: &nbsp;
                         <b-input
@@ -59,6 +59,7 @@ export default {
       })
         .then((response) => {
           this.$emit('rowPushed') // emit event named row pushed - for reloading the table
+          alert('row inserted successfully!')
         })
         .catch(function (error) {
           console.log(error)

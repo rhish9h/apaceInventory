@@ -40,7 +40,14 @@ export default {
   data () {
     return {
       compTitle: 'Product Master',
-      fields: ['delete', 'serial number', 'product', 'gender', 'pattern', 'active'],
+      fields: [
+        {key: 'delete', sortable: false},
+        {key: 'serial number', sortable: true},
+        {key: 'product', sortable: true},
+        {key: 'gender', sortable: true},
+        {key: 'pattern', sortable: true},
+        {key: 'active', sortable: true}
+      ],
       inputs: {
         product: ['', 'text'],
         gender: ['', 'text'],

@@ -41,7 +41,12 @@ export default {
     return {
       compTitle: 'Material Type Master',
       items: [],
-      fields: ['delete', 'serial number', 'material type', 'active'],
+      fields: [
+        {key: 'delete', sortable: false},
+        {key: 'serial number', sortable: true},
+        {key: 'material type', sortable: true},
+        {key: 'active', sortable: true}
+      ],
       inputs: {
         'material type': ['', 'text'],
         active: [1, 'number']

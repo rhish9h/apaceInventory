@@ -41,7 +41,12 @@ export default {
   data () {
     return {
       compTitle: 'Uom Master',
-      fields: ['delete', 'serial number', 'uom', 'active'],
+      fields: [
+        {key: 'delete', sortable: false},
+        {key: 'serial number', sortable: true},
+        {key: 'uom', sortable: true},
+        {key: 'active', sortable: true}
+      ],
       items: [],
       inputs: {
         uom: ['', 'text'],

@@ -12,7 +12,7 @@
                 </b-input>-->
 
                 <!-- iterate through inputs object and take inputs and save in same object -->
-                    <div v-for="(value, name) in inputs" :key="name">
+                    <div v-for="(value, name) in inputs" :key="name" class="col-md-3">
                         <label class="sr-only" :for="`update-${name}`">{{ name }}</label>
                         {{ name }}: &nbsp;
                         <b-input

@@ -42,7 +42,13 @@ export default {
   name: 'orderDetails',
   data () {
     return {
-      fields: ['delete', 'serial number', 'suborder id', 'size', 'quantity'],
+      fields: [
+        {key: 'delete', sortable: false},
+        {key: 'serial number', sortable: true},
+        {key: 'suborder id', sortable: true},
+        {key: 'size', sortable: true},
+        {key: 'quantity', sortable: true}
+      ],
       items: [],
       inputs: {
         'suborder id': ['', 'text'],

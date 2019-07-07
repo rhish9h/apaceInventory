@@ -52,7 +52,14 @@ export default {
         other: ['', 'text'],
         active: [1, 'number']
       },
-      fields: ['delete', 'vendor id', 'vendor type', 'vendor name', 'contact', 'active'],
+      fields: [
+        {key: 'delete', sortable: false},
+        {key: 'vendor id', sortable: true},
+        {key: 'vendor type', sortable: true},
+        {key: 'vendor name', sortable: true},
+        {key: 'contact', sortable: true},
+        {key: 'active', sortable: true}
+      ],
       updateFields: [
         ['vendor type', 'text'],
         ['vendor name', 'text'],
