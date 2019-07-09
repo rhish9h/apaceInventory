@@ -1,37 +1,37 @@
-// material type master table
-// folder: mastersPages
+// vendor master table
+// folder: mastersPage
 
 <template>
     <div>
         <!-- add record into the table -->
-        <div id="addRecordInMatTypeMast">
+        <div id="addRecordInVendMast">
           <!-- on add row - display table again -->
-          <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="material type master"></add-row>
+          <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="vendor master"></add-row>
         </div>
 
-        <!-- display table material type master -->
-        <div id="matTypeMastTable">
+        <!-- display table vendor master -->
+        <div id="vendMastTable">
 
           <!-- pagination for the table -->
           <b-pagination
             v-model="currentPage"
             :total-rows="rows"
             :per-page="perPage"
-            aria-controls="matTypeTable"
+            aria-controls="vendTable"
             class="ml-2"
           ></b-pagination>
 
-            <b-table id="matTypeTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
+            <b-table id="vendTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
 
-              <template slot="delete" slot-scope="row">
+                <template slot="delete" slot-scope="row">
                   <!-- delete row component, send row and table name -->
-                  <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="material type master"></delete-row>
+                  <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="vendor master"></delete-row>
                 </template>
 
-              <!-- collapse for updation of row -->
+                <!-- collapse for updation of row -->
               <template slot="row-details" slot-scope="row">
                 <b-card>
-                  <update-row :rowProp="row" tableNameProp="material type master" :updateFieldsProp="updateFields" @rowUpdated="allRecords"></update-row>
+                  <update-row :rowProp="row" tableNameProp="vendor master" :updateFieldsProp="updateFields" @rowUpdated="allRecords"></update-row>
                 </b-card>
               </template>
 
@@ -46,32 +46,51 @@ import delRow from '../tableManip/deleteRow'
 import updRow from '../tableManip/updateRow'
 
 export default {
-  name: 'materialTypeMaster',
+  name: 'vendorMaster',
   data () {
     return {
-      compTitle: 'Material Type Master',
+      compTitle: 'Vendor Master',
       items: [],
-      fields: [
-        {key: 'delete', sortable: false},
-        {key: 'serial number', sortable: true},
-        {key: 'material type', sortable: true},
-        {key: 'active', sortable: true}
-      ],
       inputs: {
-        'material type': ['', 'text'],
+        'vendor type': ['', 'text'],
+        'vendor name': ['', 'text'],
+        'vendor address': ['', 'text'],
+        'vendor contact': ['', 'number'],
+        'vendor email': ['', 'text'],
+        'vendor gst#': ['', 'text'],
+        'vendor pan#': ['', 'text'],
+        other: ['', 'text'],
         active: [1, 'number']
       },
-      updateFields: [['material type', 'text'], ['active', 'number']],
+      fields: [
+        {key: 'delete', sortable: false},
+        {key: 'vendor id', sortable: true},
+        {key: 'vendor type', sortable: true},
+        {key: 'vendor name', sortable: true},
+        {key: 'contact', sortable: true},
+        {key: 'active', sortable: true}
+      ],
+      updateFields: [
+        ['vendor type', 'text'],
+        ['vendor name', 'text'],
+        ['vendor address', 'text'],
+        ['vendor contact', 'number'],
+        ['vendor email', 'text'],
+        ['vendor gst#', 'text'],
+        ['vendor pan#', 'text'],
+        ['other', 'text'],
+        ['active', 'number']
+      ],
       perPage: 10,
       currentPage: 1
     }
   },
   methods: {
-    // display material type master table
+    // display vendor master table
     allRecords: function () {
       this.axios.get('http://localhost/api/displayTable.php', {
         params: {
-          tableName: 'material type master'
+          tableName: 'vendor master'
         }
       })
         .then((response) => {
@@ -90,7 +109,7 @@ export default {
       this.items.forEach(function (element) { element._showDetails = false })
     }
   },
-  // display table before mounting vue
+  // display table before vue is mounted
   beforeMount () {
     this.allRecords()
   },

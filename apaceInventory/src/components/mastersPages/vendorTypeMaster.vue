@@ -1,84 +1,70 @@
+// vendor type master table
+// folder: mastersPages
+
 <template>
     <div>
         <!-- add record into the table -->
-        <div id="addRecord">
-            <b-button v-b-toggle.collapse-1 variant="primary">Add</b-button>
-            <b-collapse id="collapse-1" class="mt-2">
-                <b-card>
-                <p class="card-text" id="addForm">
-                  <b-form inline>
-                    <label class="sr-only" for="inline-form-vendType">vendType</label>
-                    Vendor Type: &nbsp;
-                    <b-input
-                      id="inline-form-vendType"
-                      class="mb-2 mr-sm-2 mb-sm-0"
-                      placeholder="Vendor Type"
-                      v-model="inputs.vendType"
-                    ></b-input>
-
-                    <label class="sr-only" for="inline-form-active">active</label>
-                    Active: &nbsp;
-                    <b-input
-                      id="inline-form-active"
-                      class="mb-2 mr-sm-2 mb-sm-0"
-                      placeholder="Active"
-                      v-model="inputs.active"
-                      type="number"
-                    ></b-input>
-
-                  </b-form>
-                </p>
-                <b-button variant="success" @click="pushVendTypeMast">add record</b-button>
-                </b-card>
-            </b-collapse>
+        <div id="addRecordInVendTypeMast">
+          <!-- on add row - display table again -->
+          <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="vendor type master"></add-row>
         </div>
 
         <!-- display table -->
         <div id="vendTypeMastTable">
-            <b-table class="small small" striped hover :items="items" :fields="fields">
-                <!-- buttons for delete and update
-                slot-scope row used to access particular row-->
-                <template slot="delete / update" slot-scope="row">
 
-                  <b-button size="sm" @click="deleteClicked(row)" class="mr-2" variant="danger">Delete</b-button>
-                  <b-button size="sm" @click="row.toggleDetails" class="mr-2" variant="info">
-                    {{ row.detailsShowing ? 'Hide' : 'Update'}}
-                  </b-button>
+          <!-- pagination for the table -->
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            aria-controls="vendTypeTable"
+            class="ml-2"
+          ></b-pagination>
+
+            <b-table id="vendTypeTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
+
+                <!-- buttons for delete -- slot-scope row used to access particular row-->
+                <template slot="delete" slot-scope="row">
+                  <!-- delete row component, send row and table name -->
+                  <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="vendor type master"></delete-row>
                 </template>
 
                 <!-- collapse for updation of row -->
                 <template slot="row-details" slot-scope="row">
                   <b-card>
-                    <b-row class="mb-2">
-                      <b-col sm="3" class="text-sm-right"><b>Age:</b></b-col>
-                      <b-col>{{ row.item.age }}</b-col>
-                    </b-row>
-
-                    <b-row class="mb-2">
-                      <b-col sm="3" class="text-sm-right"><b>Is Active:</b></b-col>
-                      <b-col>{{ row.item.isActive }}</b-col>
-                    </b-row>
-
-                    <b-button size="sm" @click="row.toggleDetails">Hide</b-button>
+                    <update-row :rowProp="row" tableNameProp="vendor type master" :updateFieldsProp="updateFields" @rowUpdated="allRecords"></update-row>
                   </b-card>
                 </template>
+
             </b-table>
         </div>
     </div>
 </template>
 
 <script>
+import addRow from '../tableManip/addRow'
+import delRow from '../tableManip/deleteRow'
+import updRow from '../tableManip/updateRow'
+
 export default {
   name: 'vendorMaster',
   data () {
     return {
       compTitle: 'Vendor Master',
-      fields: ['delete / update', 's. no.', 'vendor type', 'active'],
+      fields: [
+        {key: 'delete', sortable: false},
+        {key: 'serial number', sortable: true},
+        {key: 'vendor type', sortable: true},
+        {key: 'active', sortable: true}
+      ],
       items: [],
       inputs: {
-        vendType: '',
-        active: 1
-      }
+        'vendor type': ['', 'text'],
+        active: [1, 'number']
+      },
+      updateFields: [['vendor type', 'text'], ['active', 'number']],
+      perPage: 10,
+      currentPage: 1
     }
   },
   methods: {
@@ -91,45 +77,32 @@ export default {
       })
         .then((response) => {
           this.items = response.data
+          this.addShowDetails()
         })
         .catch(function (error) {
           console.log(error)
         })
     },
-    // add data in the uom master table
-    pushVendTypeMast: function () {
-      this.axios.get('http://localhost/api/push/pushVendTypeMast.php', {
-        params: {
-          vendType: this.inputs.vendType,
-          active: this.inputs.active
-        }
-      })
-        .then((response) => {
-          this.allRecords()
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
+    // after row click
+    rowClicked: function (row) { // toggle _showDetails property on rowClick - later used for update
+      row._showDetails = !row._showDetails
     },
-    // delete row from vendor type master table
-    deleteClicked: function (row) {
-      this.axios.get('http://localhost/api/deleteDetails.php', {
-        params: {
-          delField: 's. no.',
-          srno: row.item['s. no.'],
-          tbNam: 'vendor type master'
-        }
-      })
-        .then((response) => {
-          this.allRecords()
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
+    addShowDetails: function () { // add property _showDetails to every row of the table
+      this.items.forEach(function (element) { element._showDetails = false })
     }
   },
   beforeMount () { // before mounting of vue
     this.allRecords()
+  },
+  components: {
+    'add-row': addRow,
+    'delete-row': delRow,
+    'update-row': updRow
+  },
+  computed: {
+    rows () { // get number of rows in the table used for pagination
+      return this.items.length
+    }
   }
 }
 </script>
