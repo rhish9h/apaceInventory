@@ -32,7 +32,7 @@ export default {
     return {
       item1: 'Masters', //  list component buttons in sidebar
       item2: 'Orders',
-      item3: 'Raw Material Stock',
+      item3: 'Materials',
       componentSelect: 'Masters', //    select component to be displayed
       active: { //  choose active component on button click
         masters: true,

@@ -1,13 +1,21 @@
 <template>
     <div>
-      <div class="heading">Raw Material Stock</div>
+      <div class="heading">Materials</div>
       <hr>
+      <div>
+        <basic-material></basic-material>
+      </div>
     </div>
 </template>
 
 <script>
+import basicMaterial from './materials/basicMaterial'
+
 export default {
-  name: 'rawMaterialStock'
+  name: 'Materials',
+  components: {
+    'basic-material': basicMaterial
+  }
 }
 </script>
 
