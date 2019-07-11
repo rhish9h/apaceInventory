@@ -9,7 +9,7 @@
 
     <div class="row">
       <div class="col-md-4 mt-3">
-        <b-form-select v-if="options.length > 1" v-model="selected" :options="options"></b-form-select>
+        <b-form-select @change="this.getRawMaterialData" v-if="options.length > 1" v-model="selected" :options="options"></b-form-select>
         <!-- v-if added to check if options is populated -->
       </div>
       <div class="mt-4 col-md-2">Material id: <strong>{{ selected }}</strong></div>
@@ -19,13 +19,18 @@
     </div>
 
     <div class="row">
-      <div class="col-md-4 mt-2" v-if="selected != '-'">Raw material available: {{ rawAvail }}</div>
+      <div class="col-md-4 mt-2">
+        Raw material available: {{ rawAvail }}
+        <br>
+        Predicted Stock after material issue: {{ updatedStock }}
+      </div>
     </div>
 
     <div class="row">
       <div class="col-md-2 mt-3"><b-button variant='primary' @click="pushMaterial">push material</b-button></div>
     </div>
-    {{ matIssRowComp }}
+    <br>
+    {{ message }}
   </div>
 </template>
 
@@ -64,8 +69,8 @@ export default {
           console.log(error)
         })
     },
-    // push product data into product master table
-    pushMaterial: function () {
+    // add row in material issue table
+    addMatIss () {
       // create fVal - array of arrays with field as key and input as value
       let fVal = []
       for (let key in this.inputs) {
@@ -85,6 +90,37 @@ export default {
         .catch(function (error) {
           console.log(error)
         })
+    },
+    // update material stock
+    updateStock () {
+      this.axios.get('http://localhost/api/updateData.php', {
+        // send actual table name and fields along with input data
+        params: {
+          tableName: 'raw material stock',
+          fieldValues: JSON.stringify([
+            ['stock', this.updatedStock],
+            ['stock value', this.updatedStock * this.matIssRow['purchase price']]
+          ]),
+          delField: 'material id',
+          sno: this.selected
+        }
+      })
+        .then((response) => {
+          alert('stock updated!')
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    },
+    pushMaterial: function () {
+      if (this.selected === '-') {
+        alert('material code not selected')
+      } else if (this.message === 'can issue' && this.rawAvail > this.netIssue) {
+        this.addMatIss()
+        this.updateStock()
+      } else {
+        alert('not enough raw material')
+      }
     },
     // get row from raw material stock based on material id
     getRawMaterialData () {
@@ -125,15 +161,25 @@ export default {
         }
       }
     },
-    matIssRowComp () {
-      if (this.selected !== '-') {
-        this.getRawMaterialData()
-      }
-      return this.matIssRow
-    },
-    rawAvail () {
+    rawAvail () { // for display of available stock
       if (this.selected !== '-') {
         return this.matIssRow.stock
+      } else {
+        return 'error'
+      }
+    },
+    message () {
+      if (this.rawAvail < this.netIssue) {
+        return 'cannot issue - raw material less than net issue'
+      } else {
+        return 'can issue'
+      }
+    },
+    updatedStock () {
+      if (this.rawAvail < this.netIssue) {
+        return '-'
+      } else {
+        return this.rawAvail - this.netIssue
       }
     }
   }
