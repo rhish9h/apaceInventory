@@ -22,7 +22,7 @@
             class="ml-2"
           ></b-pagination>
 
-         <b-table id="ordTable" :per-page="perPage" :current-page="currentPage" class="small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
+         <b-table id="ordTable" :per-page="perPage" :current-page="currentPage" class="small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" :small=true>
 
             <!-- buttons for delete and update
             slot-scope row used to access particular row-->

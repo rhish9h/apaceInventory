@@ -21,7 +21,7 @@
             class="ml-2"
           ></b-pagination>
 
-            <b-table id="prodTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
+            <b-table id="prodTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" :small=true>
 
                 <template slot="delete" slot-scope="row">
                   <!-- delete row component, send row and table name -->

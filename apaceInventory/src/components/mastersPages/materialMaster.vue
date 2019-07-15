@@ -19,7 +19,7 @@
             class="ml-2"
           ></b-pagination>
 
-            <b-table id="matTable" class="small small" :current-page="currentPage" striped hover :items="items" :fields="fields" :per-page="perPage" @row-clicked="rowClicked" small=true>
+            <b-table id="matTable" class="small small" :current-page="currentPage" striped hover :items="items" :fields="fields" :per-page="perPage" @row-clicked="rowClicked" :small=true>
               <template slot="delete" slot-scope="row">
 
                   <!-- delete row component, send row and table name -->

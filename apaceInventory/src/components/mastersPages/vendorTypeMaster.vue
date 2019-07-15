@@ -21,7 +21,7 @@
             class="ml-2"
           ></b-pagination>
 
-            <b-table id="vendTypeTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" small=true>
+            <b-table id="vendTypeTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" :small=true>
 
                 <!-- buttons for delete -- slot-scope row used to access particular row-->
                 <template slot="delete" slot-scope="row">
