@@ -2,35 +2,48 @@
   <div class="container">
     <div class="row mt-1">
       <div class="col-md-3">date issued (mm/dd/yyyy): <b-input type="date" v-model='dateip'></b-input></div>
-
-      <!-- {{ dateip }}
-      {{ inputs }} -->
+      <div class="col-md-3">issued / inward by: <b-input v-model='issuedBy' placeholder="name of person issuing"></b-input></div>
+      <div class="col-md-3">vendor:
+        <b-form-select v-if="vendorOptions.length > 1" v-model="vendorSelected" :options="vendorOptions">
+        </b-form-select>
+      </div>
     </div>
 
+    <hr>
+
     <div class="row">
-      <div class="col-md-4 mt-3">
+      <div class="col-md-7 mt-3">
         <b-form-select @change="this.getRawMaterialData" v-if="options.length > 1" v-model="selected" :options="options"></b-form-select>
         <!-- v-if added to check if options is populated -->
       </div>
       <div class="mt-4 col-md-2">Material id: <strong>{{ selected }}</strong></div>
-      <div class="col-md-2"><center>quantity issued: </center><b-input type='number' v-model='issued'></b-input></div>
-      <div class="col-md-2"><center>quantity inward: </center><b-input type='number' v-model='inward'></b-input></div>
-      <div class="mt-4 col-md-2">Net Issued: {{ netIssue }}</div>
     </div>
 
-    <div class="row">
-      <div class="col-md-4 mt-2">
-        Raw material available: {{ rawAvail }}
-        <br>
-        Predicted Stock after material issue: {{ updatedStock }}
-      </div>
+    <div class="row mt-3">
+      <div class="col-md-2"><center>quantity issued: </center><b-input type='number' v-model='issued'></b-input></div>
+      <div class="col-md-2"><center>quantity inward: </center><b-input type='number' v-model='inward'></b-input></div>
+      <div class="mt-4 col-md-2">Net Issued: <strong>{{ netIssue }}</strong></div>
     </div>
+
+    <hr>
+
+    <div class="row mt-4 ml-1">
+      <b-card>
+        <div class="col-md-12">
+          Raw material available: <strong>{{ rawAvail }}</strong>
+          <br>
+          Predicted Stock after material issue: <strong>{{ updatedStock }}</strong>
+        </div>
+      </b-card>
+    </div>
+
+    <br>
+    {{ message }}
 
     <div class="row">
       <div class="col-md-2 mt-3"><b-button variant='primary' @click="pushMaterial">push material</b-button></div>
     </div>
-    <br>
-    {{ message }}
+
   </div>
 </template>
 
@@ -40,19 +53,26 @@ export default {
   data () {
     return {
       selected: '-',
+      vendorSelected: 'Select vendor',
       options: [
         { value: '-', text: 'Select material code' }
+      ],
+      vendorOptions: [
+        'Select vendor'
       ],
       dropDownData: [],
       issued: 0,
       inward: 0,
       dateip: new Date().toISOString().slice(0, 10),
-      matIssRow: ''
+      matIssRow: '',
+      issuedBy: ''
     }
   },
   methods: {
     // populate the input select for material code
+    // also populate the input select for vendor select
     getDropDown: function () {
+      // material code
       this.axios.get('http://localhost/api/getDropDown.php', {
         params: {
           tableName: 'material master', // send table name to be displayed
@@ -63,6 +83,23 @@ export default {
           this.dropDownData = response.data
           this.dropDownData.forEach(element => {
             this.options.push({value: element['material id'], text: element['material code']})
+          })
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+      // vendor
+      this.axios.get('http://localhost/api/getDropDown.php', {
+        params: {
+          tableName: 'vendor master', // send table name to be displayed
+          columns: ['vendor name']
+        }
+      })
+        .then((response) => {
+          this.dropDownData.length = 0
+          this.dropDownData = response.data
+          this.dropDownData.forEach(element => {
+            this.vendorOptions.push(element['vendor name'])
           })
         })
         .catch(function (error) {
@@ -157,7 +194,12 @@ export default {
           'quantity issued': this.issued,
           'quantity returned': this.inward,
           'net usage': this.netIssue,
-          'date issued': this.dateip
+          'date issued': this.dateip,
+          'material issued by': this.issuedBy,
+          'material inward by': this.issuedBy,
+          'vendor (stitching)': this.vendorSelected,
+          'vendor (printing)': this.vendorSelected,
+          'vendor (packing)': this.vendorSelected
         }
       }
     },
@@ -168,14 +210,14 @@ export default {
         return 'error'
       }
     },
-    message () {
+    message () { // can or cannot issue
       if (this.rawAvail < this.netIssue) {
         return 'cannot issue - raw material less than net issue'
       } else {
         return 'can issue'
       }
     },
-    updatedStock () {
+    updatedStock () { // predicted stock
       if (this.rawAvail < this.netIssue) {
         return '-'
       } else {
