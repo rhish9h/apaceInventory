@@ -27,34 +27,56 @@
 
             <hr>
 
-            <div class="row">
-              <div class="col-md-5 mt-3">
-                <b-form-select size='sm' @change="this.getRawMaterialData" v-if="options.length > 1" v-model="selected" :options="options"></b-form-select>
+            <div class="row font-weight-bold">
+              <div class="col-md-5"><center>material code</center></div>
+              <div class="col-md-1">material id</div>
+              <div class="col-md-1">quantity issued</div>
+              <div class="col-md-1">quantity inward</div>
+              <div class="col-md-1">net issued</div>
+              <div class="col-md-1">stock available</div>
+              <div class="col-md-1">predicted stock</div>
+            </div>
+
+            <!-- loop for adding material issue/inward row -->
+
+            <div class="row mt-1" v-for="(row, index) in issInwRow" :key='index'>
+              <div class="col-md-5">
+                <b-form-select size='sm' @change="matCodeChanged(row)" v-if="options.length > 1" v-model="row.selected" :options="options"></b-form-select>
                 <!-- v-if added to check if options is populated -->
               </div>
-              <div class="mt-4 col-md-2">Material id: <strong>{{ selected }}</strong></div>
-              <div class="col-md-2"><center>quantity issued: </center><b-input size='sm' type='number' v-model='issued'></b-input></div>
-              <div class="col-md-2"><center>quantity inward: </center><b-input size='sm' type='number' v-model='inward'></b-input></div>
-              <div class="mt-4 col-md-2">Net Issued: <strong>{{ netIssue }}</strong></div>
+              <!-- material id -->
+              <div class="mt-1 col-md-1">{{ row.selected }}</div>
+              <!-- material issued -->
+              <div class="col-md-1"><b-input size='sm' type='number' v-model='row.issued' @input="issInwChanged(row)"></b-input></div>
+              <!-- material inward -->
+              <div class="col-md-1"><b-input size='sm' type='number' v-model='row.inward' @input="issInwChanged(row)"></b-input></div>
+              <!-- net issued -->
+              <div class="mt-1 col-md-1">{{ row.netIssue }}</div>
+              <!-- raw material available -->
+              <div class="mt-1 col-md-1" @change="issInwChanged(row)">{{ row.rawAvail }}</div>
+              <!-- predicted stock -->
+              <div class="mt-1 col-md-1">{{ row.updatedStock }}</div>
+              <!-- delete row button -->
+              <div class="col-md-1"><b-button size='sm' variant='danger' @click="remMatRow(index)"><strong>-</strong></b-button></div>
+
+              <div class="row ml-4" style="color: red">
+                {{ row.message }}
+              </div>
+
+            </div>
+
+            <!-- button to add material row -->
+            <div class="row">
+              <div class="col-md-12 mt-2"><b-button size='sm' @click="addMatRow">add material row <strong>+</strong></b-button></div>
             </div>
 
             <hr>
 
-            <div class="row mt-4 ml-1">
-              <b-card>
-                <div class="col-md-12">
-                  Raw material available: <strong>{{ rawAvail }}</strong>
-                  <br>
-                  Predicted Stock after material issue: <strong>{{ updatedStock }}</strong>
-                </div>
-              </b-card>
-            </div>
-
             <br>
-            {{ message }}
 
+            <!-- button to PUSH ALL MATERIAL ISSUES, also updates stock -->
             <div class="row">
-              <div class="col-md-2 mt-3"><b-button variant='primary' @click="pushMaterial">push material</b-button></div>
+              <div class="col-md-2 mt-3"><b-button variant='primary' :disabled='!canIssue' @click="pushMaterial">push material</b-button></div>
             </div>
           </div>
         </b-card>
@@ -75,7 +97,7 @@ export default {
       perPage: 10,
       currentPage: 1,
       items: [],
-      rowSelectedInfo: [], // for table row selected
+      rowSelectedInfo: [], // for table row selected, display order id, suborder id, order name in interface
       selected: '-', // for material code dropdown
       vendorSelected: 'Select vendor',
       options: [
@@ -89,11 +111,62 @@ export default {
       inward: 0,
       dateip: new Date().toISOString().slice(0, 10),
       matIssRow: '', // row from material issue table fetched from backend
-      issuedBy: ''
+      issuedBy: '',
+      issInwRow: [
+        {
+          selected: '-',
+          issued: 0,
+          inward: 0,
+          netIssue: 0,
+          rawAvail: -99,
+          updatedStock: -99,
+          message: 'select material code',
+          purchasePrice: -99
+        }
+      ] // array that holds all material issues/inwards to be done at a time
     }
   },
   methods: {
-    // on row click
+    // when issue / inward is changed from material issue/inward rows
+    issInwChanged (row) {
+      row.netIssue = row.issued - row.inward // net issue calc
+      row.updatedStock = row.rawAvail - row.netIssue // predicted stock
+      row.updatedStock = Math.round(row.updatedStock * 100) / 100 // round to 2 decimal places
+      if (row.updatedStock < 0) {
+        row.message = 'error: stock level below zero'
+      } else if (row.selected === '-') {
+        row.message = 'select material code'
+      } else {
+        row.message = ''
+      }
+    },
+    // when a material code is selected from material issue/inward rows
+    matCodeChanged (row) {
+      this.getRawMaterialData(row)
+      if (row.selected === '-') {
+        row.message = 'select material code'
+      } else {
+        row.message = ''
+      }
+    },
+    // to remove row from material issue/inward rows
+    remMatRow (index) {
+      this.issInwRow.splice(index, 1)
+    },
+    // for material issue/inward row addition
+    addMatRow () {
+      this.issInwRow.push({
+        selected: '-',
+        issued: 0,
+        inward: 0,
+        netIssue: 0,
+        rawAvail: -99,
+        updatedStock: -99,
+        message: 'select material code',
+        purchasePrice: -99
+      })
+    },
+    // on row click of suborder table
     rowSelected (row) {
       this.rowSelectedInfo = row
     },
@@ -152,69 +225,81 @@ export default {
     // add row in material issue table
     addMatIss () {
       // create fVal - array of arrays with field as key and input as value
-      let fVal = []
-      for (let key in this.inputs) {
-        let temp = [key, this.inputs[key]]
-        fVal.push(temp)
-      }
-      this.axios.get('http://localhost/api/pushData.php', {
-        // send actual table name and fields along with input data
-        params: {
-          tableName: 'material issue',
-          fieldValues: JSON.stringify(fVal)
+      var inputs = this.inputs
+      var axios = this.axios
+      var options = this.options
+      this.issInwRow.forEach(function (element) {
+        let fVal = []
+        for (let key in inputs) {
+          let temp = [key, inputs[key]]
+          fVal.push(temp)
         }
+        fVal.push(['material id', element.selected]) // send material id got per issInwRow instead of inputs (per suborder id)
+        fVal.push(['quantity issued', element.issued])
+        fVal.push(['quantity returned', element.inward])
+        fVal.push(['net usage', element.netIssue])
+        fVal.push(['material code', options.find(o => o.value === element.selected)['text']]) // find the material code from options such that value matches selected
+        axios.get('http://localhost/api/pushData.php', {
+          // send actual table name and fields along with input data
+          params: {
+            tableName: 'material issue',
+            fieldValues: JSON.stringify(fVal)
+          }
+        })
+          .then((response) => {
+            alert('material pushed successfully!')
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
       })
-        .then((response) => {
-          alert('material pushed successfully!')
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
     },
     // update material stock
     updateStock () {
-      this.axios.get('http://localhost/api/updateData.php', {
-        // send actual table name and fields along with input data
-        params: {
-          tableName: 'raw material stock',
-          fieldValues: JSON.stringify([
-            ['stock', this.updatedStock],
-            ['stock value', this.updatedStock * this.matIssRow['purchase price']]
-          ]),
-          delField: 'material id',
-          sno: this.selected
-        }
+      this.issInwRow.forEach(function (element) {
+        var axios = require('axios')
+        axios.get('http://localhost/api/updateData.php', {
+          // send actual table name and fields along with input data
+          params: {
+            tableName: 'raw material stock',
+            fieldValues: JSON.stringify([
+              ['stock', element.updatedStock],
+              ['stock value', element.updatedStock * element.purchasePrice]
+            ]),
+            delField: 'material id',
+            sno: element.selected
+          }
+        })
+          .then((response) => {
+            alert('stock updated!')
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
       })
-        .then((response) => {
-          alert('stock updated!')
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
     },
+    // on button click to PUSH ALL MATERIALS
     pushMaterial: function () {
-      if (this.selected === '-') {
-        alert('material code not selected')
-      } else if (this.message === 'can issue' && this.rawAvail > this.netIssue) {
-        this.addMatIss()
-        this.updateStock()
-      } else {
-        alert('not enough raw material')
-      }
+      this.addMatIss()
+      this.updateStock()
     },
     // get row from raw material stock based on material id
-    getRawMaterialData () {
+    getRawMaterialData (row) {
       this.axios.get('http://localhost/api/getOneRow.php', {
         // send actual table name and fields along with input data
         params: {
           tableName: 'raw material stock',
           columns: ['stock', 'purchase price', 'stock value', 'active'],
           indexColumn: 'material id',
-          strValue: this.selected
+          strValue: row.selected
         }
       })
         .then((response) => {
-          this.matIssRow = response.data[0]
+          this.matIssRow = response.data[0] // data from raw material stock with given material id
+          row.rawAvail = this.matIssRow.stock // set raw material available for particular material code
+          row.updatedStock = row.rawAvail - row.netIssue // set predicted stock for material code
+          row.updatedStock = Math.round(row.updatedStock * 100) / 100 // round to 2 decimal places
+          row.purchasePrice = this.matIssRow['purchase price'] // set purchase price for later value change
         })
         .catch(function (error) {
           console.log(error)
@@ -228,25 +313,22 @@ export default {
     this.getDropDown()
   },
   computed: {
-    buttonDisabled () {
+    buttonDisabled () { // disable material issue button - activated on row select
       if (this.rowSelectedInfo.length > 0) {
         return false
       } else {
         return true
       }
     },
-    netIssue: function () {
-      return (this.issued - this.inward)
-    },
     inputs () { // to be sent for adding row in material issue
-      if (this.selected !== '-' && this.rowSelectedInfo.length > 0) {
-        let matcode = this.options.find(o => o.value === this.selected)['text'] // find the material code from options such that value matches selected
+      if (this.rowSelectedInfo.length > 0) {
+        // let matcode = this.options.find(o => o.value === this.selected)['text'] // find the material code from options such that value matches selected
         return {
-          'material id': this.selected,
-          'material code': matcode,
-          'quantity issued': this.issued,
-          'quantity returned': this.inward,
-          'net usage': this.netIssue,
+          // 'material id': this.selected,
+          // 'material code': matcode,
+          // 'quantity issued': this.issued,
+          // 'quantity returned': this.inward,
+          // 'net usage': this.netIssue,
           'date issued': this.dateip,
           'material issued by': this.issuedBy,
           'material inward by': this.issuedBy,
@@ -258,25 +340,19 @@ export default {
         }
       }
     },
-    rawAvail () { // for display of available stock
-      if (this.selected !== '-') {
-        return this.matIssRow.stock
+    // flag to check if all materials can or cannot be issued
+    // checks message of all objects in issInwRow, can issue if all messages are ''
+    canIssue () {
+      var rowlen = this.issInwRow.length
+      if (rowlen < 1) {
+        return false
       } else {
-        return 'error'
-      }
-    },
-    message () { // can or cannot issue
-      if (this.rawAvail < this.netIssue) {
-        return 'cannot issue - raw material less than net issue'
-      } else {
-        return 'can issue'
-      }
-    },
-    updatedStock () { // predicted stock
-      if (this.rawAvail < this.netIssue) {
-        return '-'
-      } else {
-        return this.rawAvail - this.netIssue
+        for (let i = 0; i < rowlen; i++) {
+          if (this.issInwRow[i].message !== '') {
+            return false
+          }
+        }
+        return true
       }
     }
   }
