@@ -14,7 +14,7 @@ export default {
     // after delete button clicked
     deleteClicked: function (rowProp) {
       this.axios
-        .get('http://localhost/api/deleteDetails.php', {
+        .get('http://' + this.$hostname + '/api/deleteDetails.php', {
           params: {
             srno: rowProp.item['serial number'],
             tbNam: this.tableNameProp

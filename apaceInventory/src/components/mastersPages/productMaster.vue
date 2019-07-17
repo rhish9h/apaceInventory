@@ -85,7 +85,7 @@ export default {
     },
     // display product master table
     allRecords: function () {
-      this.axios.get('http://localhost/api/displayTable.php', {
+      this.axios.get('http://' + this.$hostname + '/api/displayTable.php', {
         params: {
           tableName: 'product master'
         }

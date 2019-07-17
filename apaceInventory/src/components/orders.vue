@@ -3,7 +3,7 @@
 
 <template>
     <div>
-{{$hostname}}
+<!-- {{$hostname}} -->
       <!-- material issue button -->
       <b-button class="mb-2 mt-2" variant='success' :disabled='buttonDisabled' v-b-toggle.issueMat>issue material</b-button>
       <b-collapse id="issueMat" class="mb-1" v-if="this.rowSelectedInfo.length>0">
@@ -181,7 +181,7 @@ export default {
     },
     // call backend to get all material issues per suborder id
     getMatIssPerSub () {
-      this.axios.get('http://localhost/api/getOneRow.php', {
+      this.axios.get('http://' + this.$hostname + '/api/getOneRow.php', {
         // send actual table name and fields along with input data
         params: {
           tableName: 'material issue',
@@ -204,7 +204,7 @@ export default {
     },
     // to display table
     allRecords: function () {
-      this.axios.get('http://localhost/api/displayTable.php', {
+      this.axios.get('http://' + this.$hostname + '/api/displayTable.php', {
         params: {
           tableName: 'sub/order master' // send table name to be displayed
         }
@@ -221,7 +221,7 @@ export default {
     // also populate the input select for vendor select
     getDropDown: function () {
       // material code
-      this.axios.get('http://localhost/api/getDropDown.php', {
+      this.axios.get('http://' + this.$hostname + '/api/getDropDown.php', {
         params: {
           tableName: 'material master', // send table name to be displayed
           columns: ['material code', 'material id']
@@ -237,7 +237,7 @@ export default {
           console.log(error)
         })
       // vendor
-      this.axios.get('http://localhost/api/getDropDown.php', {
+      this.axios.get('http://' + this.$hostname + '/api/getDropDown.php', {
         params: {
           tableName: 'vendor master', // send table name to be displayed
           columns: ['vendor name']
@@ -271,7 +271,7 @@ export default {
         fVal.push(['quantity returned', element.inward])
         fVal.push(['net usage', element.netIssue])
         fVal.push(['material code', options.find(o => o.value === element.selected)['text']]) // find the material code from options such that value matches selected
-        axios.get('http://localhost/api/pushData.php', {
+        axios.get('http://' + this.$hostname + '/api/pushData.php', {
           // send actual table name and fields along with input data
           params: {
             tableName: 'material issue',
@@ -290,7 +290,7 @@ export default {
     updateStock () {
       this.issInwRow.forEach(function (element) {
         var axios = require('axios')
-        axios.get('http://localhost/api/updateData.php', {
+        axios.get('http://' + this.$hostname + '/api/updateData.php', {
           // send actual table name and fields along with input data
           params: {
             tableName: 'raw material stock',
@@ -319,7 +319,7 @@ export default {
     },
     // get row from raw material stock based on material id
     getRawMaterialData (row) {
-      this.axios.get('http://localhost/api/getOneRow.php', {
+      this.axios.get('http://' + this.$hostname + '/api/getOneRow.php', {
         // send actual table name and fields along with input data
         params: {
           tableName: 'raw material stock',

@@ -69,7 +69,7 @@ export default {
   methods: {
     // display material type master table
     allRecords: function () {
-      this.axios.get('http://localhost/api/displayTable.php', {
+      this.axios.get('http://' + this.$hostname + '/api/displayTable.php', {
         params: {
           tableName: 'material type master'
         }

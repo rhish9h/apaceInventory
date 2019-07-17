@@ -239,7 +239,7 @@ export default {
       }
       fVal.push(['material id', this['material id']])
       fVal.push(['material code', this['material code']])
-      this.axios.get('http://localhost/api/pushData.php', {
+      this.axios.get('http://' + this.$hostname + '/api/pushData.php', {
         // send actual table name and fields along with input data
         params: {
           tableName: 'material master',

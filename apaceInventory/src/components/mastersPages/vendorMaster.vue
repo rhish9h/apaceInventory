@@ -88,7 +88,7 @@ export default {
   methods: {
     // display vendor master table
     allRecords: function () {
-      this.axios.get('http://localhost/api/displayTable.php', {
+      this.axios.get('http://' + this.$hostname + '/api/displayTable.php', {
         params: {
           tableName: 'vendor master'
         }

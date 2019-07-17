@@ -73,7 +73,7 @@ export default {
   methods: {
     // to display table
     allRecords: function () {
-      this.axios.get('http://localhost/api/displayTable.php', {
+      this.axios.get('http://' + this.$hostname + '/api/displayTable.php', {
         params: {
           tableName: 'order details' // send table name to be displayed
         }

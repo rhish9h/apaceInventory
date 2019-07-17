@@ -50,7 +50,7 @@ export default {
         let temp = [key, this.inputs[key][0]]
         fVal.push(temp)
       }
-      this.axios.get('http://localhost/api/pushData.php', {
+      this.axios.get('http://' + this.$hostname + '/api/pushData.php', {
         // send actual table name and fields along with input data
         params: {
           tableName: this.tableNameProp,

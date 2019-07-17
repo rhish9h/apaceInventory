@@ -73,7 +73,7 @@ export default {
     // also populate the input select for vendor select
     getDropDown: function () {
       // material code
-      this.axios.get('http://localhost/api/getDropDown.php', {
+      this.axios.get('http://' + this.$hostname + '/api/getDropDown.php', {
         params: {
           tableName: 'material master', // send table name to be displayed
           columns: ['material code', 'material id']
@@ -89,7 +89,7 @@ export default {
           console.log(error)
         })
       // vendor
-      this.axios.get('http://localhost/api/getDropDown.php', {
+      this.axios.get('http://' + this.$hostname + '/api/getDropDown.php', {
         params: {
           tableName: 'vendor master', // send table name to be displayed
           columns: ['vendor name']
@@ -114,7 +114,7 @@ export default {
         let temp = [key, this.inputs[key]]
         fVal.push(temp)
       }
-      this.axios.get('http://localhost/api/pushData.php', {
+      this.axios.get('http://' + this.$hostname + '/api/pushData.php', {
         // send actual table name and fields along with input data
         params: {
           tableName: 'material issue',
@@ -130,7 +130,7 @@ export default {
     },
     // update material stock
     updateStock () {
-      this.axios.get('http://localhost/api/updateData.php', {
+      this.axios.get('http://' + this.$hostname + '/api/updateData.php', {
         // send actual table name and fields along with input data
         params: {
           tableName: 'raw material stock',
@@ -161,7 +161,7 @@ export default {
     },
     // get row from raw material stock based on material id
     getRawMaterialData () {
-      this.axios.get('http://localhost/api/getOneRow.php', {
+      this.axios.get('http://' + this.$hostname + '/api/getOneRow.php', {
         // send actual table name and fields along with input data
         params: {
           tableName: 'raw material stock',
