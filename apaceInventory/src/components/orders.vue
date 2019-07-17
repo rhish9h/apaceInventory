@@ -1,83 +1,95 @@
+// orders page
+// contains orders table along with material issue component
+
 <template>
     <div>
-
+{{$hostname}}
       <!-- material issue button -->
       <b-button class="mb-2 mt-2" variant='success' :disabled='buttonDisabled' v-b-toggle.issueMat>issue material</b-button>
       <b-collapse id="issueMat" class="mb-1" v-if="this.rowSelectedInfo.length>0">
         <!-- v-if makes sure that collapse is only open when row is selected -->
         <b-card>
-          <div class="container">
+          <div>
 
-            <div class="row pt-2 pb-2 rounded mb-4" style='background-color: #99ccff'>
-              <div class="col-md-12">Order Id: <strong>{{ rowSelectedInfo[0]['order id'] }}</strong></div>
-              <div class="col-md-12">Sub-Order Id: <strong>{{ rowSelectedInfo[0]['sub-order id'] }}</strong></div>
-              <div class="col-md-12">Order Name: <strong>{{ rowSelectedInfo[0]['order name'] }}</strong></div>
+            <div class="pt-2 pb-2 rounded mb-4 ml-1 mr-1" style='background-color: #99ccff'>
+              <div class="ml-2">Order Id: <strong>{{ rowSelectedInfo[0]['order id'] }}</strong></div>
+              <div class="ml-2">Sub-Order Id: <strong>{{ rowSelectedInfo[0]['sub-order id'] }}</strong></div>
+              <div class="ml-2">Order Name: <strong>{{ rowSelectedInfo[0]['order name'] }}</strong></div>
+
+              <!-- for previously issued materials -->
+              <div id="previously issued materials">
+                <b-card class="ml-2 mr-2 mb-1 mt-1">
+                  <!-- print table containing material issues per suborder -->
+                  <b-table striped hover :items='issPerSubOrder.data' :small=true></b-table>
+                </b-card>
+              </div>
             </div>
 
             <!-- <hr> -->
-
-            <div class="row mt-1">
-              <div class="col-md-3">date issued (mm/dd/yyyy): <b-input size='sm' type="date" v-model='dateip'></b-input></div>
-              <div class="col-md-3">issued / inward by: <b-input size='sm' v-model='issuedBy' placeholder="name of person issuing"></b-input></div>
-              <div class="col-md-3">vendor:
-                <b-form-select size='sm' v-if="vendorOptions.length > 1" v-model="vendorSelected" :options="vendorOptions">
-                </b-form-select>
-              </div>
-            </div>
-
-            <hr>
-
-            <div class="row font-weight-bold">
-              <div class="col-md-5"><center>material code</center></div>
-              <div class="col-md-1">material id</div>
-              <div class="col-md-1">quantity issued</div>
-              <div class="col-md-1">quantity inward</div>
-              <div class="col-md-1">net issued</div>
-              <div class="col-md-1">stock available</div>
-              <div class="col-md-1">predicted stock</div>
-            </div>
-
-            <!-- loop for adding material issue/inward row -->
-
-            <div class="row mt-1" v-for="(row, index) in issInwRow" :key='index'>
-              <div class="col-md-5">
-                <b-form-select size='sm' @change="matCodeChanged(row)" v-if="options.length > 1" v-model="row.selected" :options="options"></b-form-select>
-                <!-- v-if added to check if options is populated -->
-              </div>
-              <!-- material id -->
-              <div class="mt-1 col-md-1">{{ row.selected }}</div>
-              <!-- material issued -->
-              <div class="col-md-1"><b-input size='sm' type='number' v-model='row.issued' @input="issInwChanged(row)"></b-input></div>
-              <!-- material inward -->
-              <div class="col-md-1"><b-input size='sm' type='number' v-model='row.inward' @input="issInwChanged(row)"></b-input></div>
-              <!-- net issued -->
-              <div class="mt-1 col-md-1">{{ row.netIssue }}</div>
-              <!-- raw material available -->
-              <div class="mt-1 col-md-1" @change="issInwChanged(row)">{{ row.rawAvail }}</div>
-              <!-- predicted stock -->
-              <div class="mt-1 col-md-1">{{ row.updatedStock }}</div>
-              <!-- delete row button -->
-              <div class="col-md-1"><b-button size='sm' variant='danger' @click="remMatRow(index)"><strong>-</strong></b-button></div>
-
-              <div class="row ml-4" style="color: red">
-                {{ row.message }}
+            <b-card class="ml-1 mr-1" style="background-color: #d5f5e3 ">
+              <div class="row mt-1">
+                <div class="col-md-3">date issued (mm/dd/yyyy): <b-input size='sm' type="date" v-model='dateip'></b-input></div>
+                <div class="col-md-3">issued / inward by: <b-input size='sm' v-model='issuedBy' placeholder="name of person issuing"></b-input></div>
+                <div class="col-md-3">vendor:
+                  <b-form-select size='sm' v-if="vendorOptions.length > 1" v-model="vendorSelected" :options="vendorOptions">
+                  </b-form-select>
+                </div>
               </div>
 
-            </div>
+              <hr>
 
-            <!-- button to add material row -->
-            <div class="row">
-              <div class="col-md-12 mt-2"><b-button size='sm' @click="addMatRow">add material row <strong>+</strong></b-button></div>
-            </div>
+              <div class="row font-weight-bold">
+                <div class="col-md-5"><center>material code</center></div>
+                <div class="col-md-1">material id</div>
+                <div class="col-md-1">quantity issued</div>
+                <div class="col-md-1">quantity inward</div>
+                <div class="col-md-1">net issued</div>
+                <div class="col-md-1">stock available</div>
+                <div class="col-md-1">predicted stock</div>
+              </div>
 
-            <hr>
+              <!-- loop for adding material issue/inward row -->
 
-            <br>
+              <div class="row mt-1" v-for="(row, index) in issInwRow" :key='index'>
+                <div class="col-md-5">
+                  <b-form-select size='sm' @change="matCodeChanged(row)" v-if="options.length > 1" v-model="row.selected" :options="options"></b-form-select>
+                  <!-- v-if added to check if options is populated -->
+                </div>
+                <!-- material id -->
+                <div class="mt-1 col-md-1">{{ row.selected }}</div>
+                <!-- material issued -->
+                <div class="col-md-1"><b-input size='sm' type='number' v-model='row.issued' @input="issInwChanged(row)"></b-input></div>
+                <!-- material inward -->
+                <div class="col-md-1"><b-input size='sm' type='number' v-model='row.inward' @input="issInwChanged(row)"></b-input></div>
+                <!-- net issued -->
+                <div class="mt-1 col-md-1">{{ row.netIssue }}</div>
+                <!-- raw material available -->
+                <div class="mt-1 col-md-1" @change="issInwChanged(row)">{{ row.rawAvail }}</div>
+                <!-- predicted stock -->
+                <div class="mt-1 col-md-1">{{ row.updatedStock }}</div>
+                <!-- delete row button -->
+                <div class="col-md-1"><b-button size='sm' variant='danger' @click="remMatRow(index)"><strong>-</strong></b-button></div>
 
-            <!-- button to PUSH ALL MATERIAL ISSUES, also updates stock -->
-            <div class="row">
-              <div class="col-md-2 mt-3"><b-button variant='primary' :disabled='!canIssue' @click="pushMaterial">push material</b-button></div>
-            </div>
+                <div class="row ml-4" style="color: red">
+                  {{ row.message }}
+                </div>
+
+              </div>
+
+              <!-- button to add material row -->
+              <div class="row">
+                <div class="col-md-12 mt-2"><b-button size='sm' @click="addMatRow">add material row <strong>+</strong></b-button></div>
+              </div>
+
+              <hr>
+
+              <br>
+
+              <!-- button to PUSH ALL MATERIAL ISSUES, also updates stock -->
+              <div class="row">
+                <div class="col-md-2 mt-3"><b-button variant='primary' :disabled='!canIssue' @click="pushMaterial">push material</b-button></div>
+              </div>
+            </b-card>
           </div>
         </b-card>
       </b-collapse>
@@ -123,7 +135,8 @@ export default {
           message: 'select material code',
           purchasePrice: -99
         }
-      ] // array that holds all material issues/inwards to be done at a time
+      ], // array that holds all material issues/inwards to be done at a time
+      issPerSubOrder: [] // array that holds material issues per suborder - got from backend
     }
   },
   methods: {
@@ -166,9 +179,28 @@ export default {
         purchasePrice: -99
       })
     },
+    // call backend to get all material issues per suborder id
+    getMatIssPerSub () {
+      this.axios.get('http://localhost/api/getOneRow.php', {
+        // send actual table name and fields along with input data
+        params: {
+          tableName: 'material issue',
+          columns: ['material id', 'material code', 'quantity issued', 'quantity returned', 'net usage', 'material issued by', 'date issued', 'vendor (stitching)'],
+          indexColumn: 'suborder id',
+          strValue: this.rowSelectedInfo[0]['sub-order id'] // get suborder id from row selected
+        }
+      })
+        .then((response) => {
+          this.issPerSubOrder = response
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    },
     // on row click of suborder table
     rowSelected (row) {
       this.rowSelectedInfo = row
+      this.getMatIssPerSub() // call backend to get all material issues per suborder id
     },
     // to display table
     allRecords: function () {
@@ -280,8 +312,10 @@ export default {
     },
     // on button click to PUSH ALL MATERIALS
     pushMaterial: function () {
-      this.addMatIss()
-      this.updateStock()
+      this.addMatIss() // issue materials
+      this.updateStock() // update stocks
+      this.getMatIssPerSub() // reload table - by getting mat iss info again
+      this.issInwRow = [] // empty iss inw input row
     },
     // get row from raw material stock based on material id
     getRawMaterialData (row) {

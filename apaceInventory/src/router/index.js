@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import homePage from '@/components/homePage'
 
 Vue.use(Router)
+Vue.prototype.$hostname = 'localhost'
 
 export default new Router({
   routes: [
