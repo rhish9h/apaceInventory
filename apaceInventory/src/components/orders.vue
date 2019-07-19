@@ -3,10 +3,24 @@
 
 <template>
     <div>
-<!-- {{$hostname}} -->
-      <!-- material issue button -->
-      <b-button class="mb-2 mt-2" variant='success' :disabled='buttonDisabled' v-b-toggle.issueMat>issue material</b-button>
-      <b-collapse id="issueMat" class="mb-1" v-if="this.rowSelectedInfo.length>0">
+      <div class="row">
+        <!-- material issue button -->
+        <div class="col-md-2">
+          <b-button class="mb-2 mt-2" variant='success' :disabled='buttonDisabled' v-b-toggle.issueMat>issue material</b-button>
+        </div>
+        <!-- add order button -->
+        <div class="col-md-2 my-2">
+          <b-button v-b-toggle.addOrderCollapse>Add Order</b-button>
+        </div>
+      </div>
+
+      <!-- collapse for add order component -->
+      <b-collapse id="addOrderCollapse" class="mb-1" v-model='showAddOrder'>
+        <add-order></add-order>
+      </b-collapse>
+
+      <!-- collapse for issue material component -->
+      <b-collapse id="issueMat" class="mb-1" v-if="this.rowSelectedInfo.length>0" v-model="showMatIss">
         <!-- v-if makes sure that collapse is only open when row is selected -->
         <b-card>
           <div>
@@ -102,10 +116,17 @@
 </template>
 
 <script>
+import addOrder from './addOrder'
+
 export default {
   name: 'orders',
+  components: {
+    'add-order': addOrder
+  },
   data () {
     return {
+      showAddOrder: false,
+      showMatIss: false,
       perPage: 10,
       currentPage: 1,
       items: [],
