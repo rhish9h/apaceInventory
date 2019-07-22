@@ -16,7 +16,7 @@
 
       <!-- collapse for add order component -->
       <b-collapse id="addOrderCollapse" class="mb-1" v-model='showAddOrder'>
-        <add-order @rowPushed='allRecords'></add-order>
+        <add-order @rowPushed='addOrderRowPushed' :key='rerenderAddOrder'></add-order>
       </b-collapse>
 
       <!-- collapse for issue material component -->
@@ -34,6 +34,7 @@
               <div id="previously issued materials">
                 <b-card class="ml-2 mr-2 mb-1 mt-1">
                   <!-- print table containing material issues per suborder -->
+                  <!-- {{issPerSubOrder.data}} -->
                   <b-table striped hover :items='issPerSubOrder.data' :small=true></b-table>
                 </b-card>
               </div>
@@ -157,10 +158,16 @@ export default {
           purchasePrice: -99
         }
       ], // array that holds all material issues/inwards to be done at a time
-      issPerSubOrder: [] // array that holds material issues per suborder - got from backend
+      issPerSubOrder: [], // array that holds material issues per suborder - got from backend
+      rerenderAddOrder: 0 // key used to rerender add order component
     }
   },
   methods: {
+    // method to rerender table and the add order component
+    addOrderRowPushed () {
+      this.allRecords()
+      this.rerenderAddOrder++
+    },
     // when issue / inward is changed from material issue/inward rows
     issInwChanged (row) {
       row.netIssue = row.issued - row.inward // net issue calc
@@ -281,6 +288,8 @@ export default {
       var inputs = this.inputs
       var axios = this.axios
       var options = this.options
+      var hostname = this.$hostname
+      var thisObj = this
       this.issInwRow.forEach(function (element) {
         let fVal = []
         for (let key in inputs) {
@@ -292,7 +301,7 @@ export default {
         fVal.push(['quantity returned', element.inward])
         fVal.push(['net usage', element.netIssue])
         fVal.push(['material code', options.find(o => o.value === element.selected)['text']]) // find the material code from options such that value matches selected
-        axios.get('http://' + this.$hostname + '/api/pushData.php', {
+        axios.get('http://' + hostname + '/api/pushData.php', {
           // send actual table name and fields along with input data
           params: {
             tableName: 'material issue',
@@ -300,6 +309,7 @@ export default {
           }
         })
           .then((response) => {
+            thisObj.getMatIssPerSub() // reload table - by getting mat iss info again
             alert('material pushed successfully!')
           })
           .catch(function (error) {
@@ -309,9 +319,10 @@ export default {
     },
     // update material stock
     updateStock () {
+      var hostname = this.$hostname
       this.issInwRow.forEach(function (element) {
         var axios = require('axios')
-        axios.get('http://' + this.$hostname + '/api/updateData.php', {
+        axios.get('http://' + hostname + '/api/updateData.php', {
           // send actual table name and fields along with input data
           params: {
             tableName: 'raw material stock',
@@ -335,7 +346,6 @@ export default {
     pushMaterial: function () {
       this.addMatIss() // issue materials
       this.updateStock() // update stocks
-      this.getMatIssPerSub() // reload table - by getting mat iss info again
       this.issInwRow = [] // empty iss inw input row
     },
     // get row from raw material stock based on material id

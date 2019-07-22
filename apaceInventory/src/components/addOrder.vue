@@ -4,8 +4,8 @@
   <div>
     <b-card>
       <b-container>
-      {{inputs}} monthYear: {{monthYear}} newOrderId: {{newOrderId}} newOrder: {{newOrder}} subOrderIdList: {{subOrderIdList}}
-      orderIdDDown.length: {{orderIdDDown.length}} canPush: {{canPush}} errorMessage: {{errorMessage}}
+      <!-- {{inputs}} monthYear: {{monthYear}} newOrderId: {{newOrderId}} newOrder: {{newOrder}} subOrderIdList: {{subOrderIdList}}
+      orderIdDDown.length: {{orderIdDDown.length}} canPush: {{canPush}} errorMessage: {{errorMessage}} -->
       <b-row>
         <b-col>
           Date Order Received: <b-input type='date' v-model="inputs.dateOrderRcvd" size='sm' @input='dateOrderChanged'></b-input>
