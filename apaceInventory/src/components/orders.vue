@@ -16,7 +16,7 @@
 
       <!-- collapse for add order component -->
       <b-collapse id="addOrderCollapse" class="mb-1" v-model='showAddOrder'>
-        <add-order></add-order>
+        <add-order @rowPushed='allRecords'></add-order>
       </b-collapse>
 
       <!-- collapse for issue material component -->
