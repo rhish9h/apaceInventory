@@ -10,7 +10,7 @@
         </div>
         <!-- add order button -->
         <div class="col-md-2 my-2">
-          <b-button v-b-toggle.addOrderCollapse>Add Order</b-button>
+          <b-button v-b-toggle.addOrderCollapse style="background-color: #ba04de">Add Order</b-button>
         </div>
       </div>
 
@@ -138,7 +138,7 @@
       <!-- display sub orders table -->
       <b-table id="subOrdTable" selectable selectedVariant='success' select-mode='single' :per-page="perPage"
       :bordered=true :current-page="currentPage" class="small" striped hover :items="items" :fields='fields'
-      @row-selected='rowSelected' :small='true' :filter='filter' @filtered='onFiltered'>
+      @row-selected='rowSelected' @row-clicked='rowClicked' :small='true' :filter='filter' @filtered='onFiltered'>
 
         <!-- buttons for delete and update
         slot-scope row used to access particular row-->
@@ -147,6 +147,12 @@
           <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="sub/order master"></delete-row>
         </template>
 
+        <template slot="row-details" slot-scope="row">
+          <b-card>
+            <update-order :rowProp="row" @rowUpdated="allRecords">
+            </update-order>
+          </b-card>
+        </template>
       </b-table>
     </div>
 </template>
@@ -154,12 +160,14 @@
 <script>
 import addOrder from './addOrder'
 import deleteRow from './tableManip/deleteRow'
+import updateOrder from './tableManip/updateRowFolder/updateOrder'
 
 export default {
   name: 'orders',
   components: {
     'add-order': addOrder,
-    'delete-row': deleteRow
+    'delete-row': deleteRow,
+    'update-order': updateOrder
   },
   data () {
     return {
@@ -172,8 +180,8 @@ export default {
         {key: 'delete', sortable: false},
         {key: 'serial number', sortable: true},
         {key: 'order name', sortable: true},
-        {key: 'month-year', sortable: true},
-        {key: 'order id', sortable: true},
+        // {key: 'month-year', sortable: true},
+        // {key: 'order id', sortable: true},
         {key: 'sub-order id', sortable: true},
         {key: 'date order received', sortable: true},
         {key: 'date issued', sortable: true},
@@ -184,10 +192,10 @@ export default {
         {key: 'pattern', sortable: true},
         {key: 'order code', sortable: true},
         {key: 'total', sortable: true},
-        {key: 'product related instructions', sortable: true},
-        {key: 'product notes', sortable: true},
-        {key: 'printing details', sortable: true},
-        {key: 'printing notes', sortable: true},
+        // {key: 'product related instructions', sortable: true},
+        // {key: 'product notes', sortable: true},
+        // {key: 'printing details', sortable: true},
+        // {key: 'printing notes', sortable: true},
         {key: 'flag', sortable: true}
       ],
       rowSelectedInfo: [], // for table row selected, display order id, suborder id, order name in interface
@@ -291,6 +299,13 @@ export default {
       this.rowSelectedInfo = row
       this.getMatIssPerSub() // call backend to get all material issues per suborder id
     },
+    // after row click
+    rowClicked: function (row) { // toggle _showDetails property on rowClick - later used for update
+      row._showDetails = !row._showDetails
+    },
+    addShowDetails: function () { // add property _showDetails to every row of the table
+      this.items.forEach(function (element) { element._showDetails = false })
+    },
     // to display table
     allRecords: function () {
       this.axios.get('http://' + this.$hostname + '/api/displayTable.php', {
@@ -301,7 +316,7 @@ export default {
         .then((response) => {
           this.items = response.data
           this.totalRows = this.items.length
-          // this.addShowDetails() // call to add show details property to every row
+          this.addShowDetails() // call to add show details property to every row
         })
         .catch(function (error) {
           console.log(error)
