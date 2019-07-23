@@ -3,26 +3,47 @@
 
 <template>
     <div>
-      <!-- add record into the table -->
-        <div id="addRecordInOrderDetails">
-          <!-- on add row - display table again -->
-          <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="order details"></add-row>
-        </div>
+      <b-row>
+        <b-col>
+          <!-- add record into the table -->
+          <div id="addRecordInOrderDetails">
+            <!-- on add row - display table again -->
+            <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="order details"></add-row>
+          </div>
+        </b-col>
+      </b-row>
+      <b-row>
+        <!-- filter (search) -->
+        <b-col md="6" class="mt-2 ml-2">
+          <b-form-group label-cols-sm="1" label="Filter" class="mb-0">
+            <b-input-group>
+              <b-form-input v-model="filter" placeholder="Type to Search" size='sm'></b-form-input>
+              <b-input-group-append>
+                <b-button :disabled="!filter" @click="filter = ''" size='sm'>Clear</b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+        </b-col>
+
+        <b-col class="mt-2">
+          <!-- pagination for the table -->
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            aria-controls="ordTable"
+            class="ml-2"
+            size='sm'
+          ></b-pagination>
+        </b-col>
+      </b-row>
 
       <!-- display the table -->
 
         <div id="tableDisplay">
 
-          <!-- pagination for the table -->
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="ordTable"
-            class="ml-2"
-          ></b-pagination>
-
-         <b-table id="ordTable" :per-page="perPage" :current-page="currentPage" class="small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" :small=true>
+         <b-table id="ordTable" :per-page="perPage" :current-page="currentPage" class="small" striped hover
+         :items="items" :fields="fields" @row-clicked="rowClicked" :small=true :filter='filter' @filtered='onFiltered'>
 
             <!-- buttons for delete and update
             slot-scope row used to access particular row-->
@@ -67,7 +88,9 @@ export default {
       },
       updateFields: [['size', 'text'], ['quantity', 'number']],
       perPage: 10,
-      currentPage: 1
+      currentPage: 1,
+      filter: null,
+      totalRows: 1
     }
   },
   methods: {
@@ -81,6 +104,7 @@ export default {
         .then((response) => {
           this.items = response.data
           this.addShowDetails() // call to add show details property to every row
+          this.totalRows = this.items.length // used for pagination
         })
         .catch(function (error) {
           console.log(error)
@@ -92,6 +116,11 @@ export default {
     },
     addShowDetails: function () { // add property _showDetails to every row of the table
       this.items.forEach(function (element) { element._showDetails = false })
+    },
+    onFiltered (filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
     }
   },
   beforeMount () { // display before mounting
@@ -103,9 +132,6 @@ export default {
     'update-row': updRow
   },
   computed: {
-    rows () { // get number of rows in the table used for pagination
-      return this.items.length
-    }
   }
 }
 </script>

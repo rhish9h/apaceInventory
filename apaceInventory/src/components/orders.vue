@@ -109,20 +109,57 @@
         </b-card>
       </b-collapse>
 
+      <b-row>
+        <!-- filter (search) -->
+        <b-col md="6" class="mt-2 ml-2">
+          <b-form-group label-cols-sm="1" label="Filter" class="mb-0">
+            <b-input-group>
+              <b-form-input v-model="filter" placeholder="Type to Search" size='sm'></b-form-input>
+              <b-input-group-append>
+                <b-button :disabled="!filter" @click="filter = ''" size='sm'>Clear</b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+        </b-col>
+
+        <b-col class="mt-2">
+          <!-- pagination for the table -->
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            aria-controls="subOrdTable"
+            class="ml-2"
+            size='sm'
+          ></b-pagination>
+        </b-col>
+      </b-row>
+
       <!-- display sub orders table -->
       <b-table id="subOrdTable" selectable selectedVariant='success' select-mode='single' :per-page="perPage"
-      :bordered=true :current-page="currentPage" class="small" striped hover :items="items" @row-selected='rowSelected' :small=true>
+      :bordered=true :current-page="currentPage" class="small" striped hover :items="items" :fields='fields'
+      @row-selected='rowSelected' :small='true' :filter='filter' @filtered='onFiltered'>
+
+        <!-- buttons for delete and update
+        slot-scope row used to access particular row-->
+        <template slot="delete" slot-scope="row">
+          <!-- delete row component, send row and table name -->
+          <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="sub/order master"></delete-row>
+        </template>
+
       </b-table>
     </div>
 </template>
 
 <script>
 import addOrder from './addOrder'
+import deleteRow from './tableManip/deleteRow'
 
 export default {
   name: 'orders',
   components: {
-    'add-order': addOrder
+    'add-order': addOrder,
+    'delete-row': deleteRow
   },
   data () {
     return {
@@ -131,6 +168,28 @@ export default {
       perPage: 10,
       currentPage: 1,
       items: [],
+      fields: [
+        {key: 'delete', sortable: false},
+        {key: 'serial number', sortable: true},
+        {key: 'order name', sortable: true},
+        {key: 'month-year', sortable: true},
+        {key: 'order id', sortable: true},
+        {key: 'sub-order id', sortable: true},
+        {key: 'date order received', sortable: true},
+        {key: 'date issued', sortable: true},
+        {key: 'promised delivery date', sortable: true},
+        {key: 'vendor', sortable: true},
+        {key: 'folder reference', sortable: true},
+        {key: 'product', sortable: true},
+        {key: 'pattern', sortable: true},
+        {key: 'order code', sortable: true},
+        {key: 'total', sortable: true},
+        {key: 'product related instructions', sortable: true},
+        {key: 'product notes', sortable: true},
+        {key: 'printing details', sortable: true},
+        {key: 'printing notes', sortable: true},
+        {key: 'flag', sortable: true}
+      ],
       rowSelectedInfo: [], // for table row selected, display order id, suborder id, order name in interface
       selected: '-', // for material code dropdown
       vendorSelected: 'Select vendor',
@@ -159,7 +218,9 @@ export default {
         }
       ], // array that holds all material issues/inwards to be done at a time
       issPerSubOrder: [], // array that holds material issues per suborder - got from backend
-      rerenderAddOrder: 0 // key used to rerender add order component
+      rerenderAddOrder: 0, // key used to rerender add order component
+      filter: null,
+      totalRows: 1
     }
   },
   methods: {
@@ -239,6 +300,7 @@ export default {
       })
         .then((response) => {
           this.items = response.data
+          this.totalRows = this.items.length
           // this.addShowDetails() // call to add show details property to every row
         })
         .catch(function (error) {
@@ -369,6 +431,11 @@ export default {
         .catch(function (error) {
           console.log(error)
         })
+    },
+    onFiltered (filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
     }
   },
   beforeMount () { // display before mounting

@@ -3,25 +3,46 @@
 
 <template>
     <div>
-      <!-- add record into the table -->
-        <div id="addRecordInProdMast">
-          <!-- on add row - display table again -->
-          <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="product master"></add-row>
-        </div>
+      <b-row>
+        <b-col>
+          <!-- add record into the table -->
+          <div id="addRecordInProdMast">
+            <!-- on add row - display table again -->
+            <add-row @rowPushed="allRecords" :inputsProp="inputs" tableNameProp="product master"></add-row>
+          </div>
+        </b-col>
+      </b-row>
 
-      <!-- display table -->
-        <div id="prodMastTable">
+      <b-row class="mt-2">
+        <!-- filter (search) -->
+        <b-col md="6" class="ml-2">
+          <b-form-group label-cols-sm="1" label="Filter" class="mb-0">
+            <b-input-group>
+              <b-form-input v-model="filter" placeholder="Type to Search" size='sm'></b-form-input>
+              <b-input-group-append>
+                <b-button :disabled="!filter" @click="filter = ''" size='sm'>Clear</b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+        </b-col>
 
+        <b-col>
           <!-- pagination for the table -->
           <b-pagination
             v-model="currentPage"
-            :total-rows="rows"
+            :total-rows="totalRows"
             :per-page="perPage"
             aria-controls="prodTable"
             class="ml-2"
+            size='sm'
           ></b-pagination>
+        </b-col>
+      </b-row>
+      <!-- display table -->
+        <div id="prodMastTable">
 
-            <b-table id="prodTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover :items="items" :fields="fields" @row-clicked="rowClicked" :small=true>
+            <b-table id="prodTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover
+            :items="items" :fields="fields" @row-clicked="rowClicked" :small=true :filter='filter' @filtered='onFiltered'>
 
                 <template slot="delete" slot-scope="row">
                   <!-- delete row component, send row and table name -->
@@ -72,7 +93,9 @@ export default {
         ['active', 'number']
       ],
       perPage: 10,
-      currentPage: 1
+      currentPage: 1,
+      filter: null,
+      totalRows: 1
     }
   },
   methods: {
@@ -93,10 +116,16 @@ export default {
         .then((response) => {
           this.items = response.data
           this.addShowDetails()
+          this.totalRows = this.items.length // for pagination
         })
         .catch(function (error) {
           console.log(error)
         })
+    },
+    onFiltered (filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
     }
   },
   // display table before mounting vue
@@ -110,9 +139,6 @@ export default {
     'update-row': updRow
   },
   computed: {
-    rows () { // get number of rows in the table used for pagination
-      return this.items.length
-    }
   }
 }
 </script>

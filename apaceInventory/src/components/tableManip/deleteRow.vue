@@ -3,7 +3,7 @@
 
 <template>
   <div id="deleteButton">
-    <b-button size="sm" @click="deleteClicked(rowProp)" class="mr-2" variant="danger">Delete</b-button>
+    <b-button size="sm" @click="deleteClicked(rowProp)" class="mr-2" variant="danger">-</b-button>
   </div>
 </template>
 

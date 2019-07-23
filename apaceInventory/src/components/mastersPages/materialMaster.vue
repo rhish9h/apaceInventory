@@ -3,23 +3,44 @@
 
 <template>
     <div>
-        <!-- add record into the table -->
-        <div id="addRecordInMatMast">
-          <!-- on add row - display table again -->
-          <add-row @rowPushed="allRecords" :maxSNo='maxSNo'></add-row>
-        </div>
+      <b-row>
+        <b-col class="mt-1 ml-2">
+          <!-- add record into the table -->
+          <div id="addRecordInMatMast">
+            <!-- on add row - display table again -->
+            <add-row @rowPushed="allRecords" :maxSNo='maxSNo'></add-row>
+          </div>
+        </b-col>
+      </b-row>
+      <b-row class="mt-2">
+        <!-- filter (search) -->
+        <b-col md="6" class="ml-2">
+          <b-form-group label-cols-sm="1" label="Filter" class="mb-0">
+            <b-input-group>
+              <b-form-input v-model="filter" placeholder="Type to Search" size='sm'></b-form-input>
+              <b-input-group-append>
+                <b-button :disabled="!filter" @click="filter = ''" size='sm'>Clear</b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <!-- pagination -->
+          <b-pagination
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+              aria-controls="matTable"
+              class="ml-2"
+              size='sm'
+            ></b-pagination>
+        </b-col>
+      </b-row>
+
         <div id="matMastTable">
 
-          <!-- pagination for the table -->
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="matTable"
-            class="ml-2"
-          ></b-pagination>
-
-            <b-table id="matTable" class="small small" :current-page="currentPage" striped hover :items="items" :fields="fields" :per-page="perPage" @row-clicked="rowClicked" :small=true>
+            <b-table id="matTable" class="small small" :current-page="currentPage" striped hover :items="items" :fields="fields"
+            :per-page="perPage" @row-clicked="rowClicked" :small=true :filter='filter' @filtered='onFiltered'>
               <template slot="delete" slot-scope="row">
 
                   <!-- delete row component, send row and table name -->
@@ -76,7 +97,9 @@ export default {
         ['attrib5', 'text']
       ],
       perPage: 10,
-      currentPage: 1
+      currentPage: 1,
+      filter: null,
+      totalRows: 1
     }
   },
   methods: {
@@ -90,6 +113,7 @@ export default {
         .then((response) => {
           this.items = response.data
           this.addShowDetails()
+          this.totalRows = this.items.length // to set total rows for pagination
         })
         .catch(function (error) {
           console.log(error)
@@ -102,6 +126,11 @@ export default {
     },
     addShowDetails: function () { // add property _showDetails to every row of the table
       this.items.forEach(function (element) { element._showDetails = false })
+    },
+    onFiltered (filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
     }
   },
   // display every time before mounting vue
@@ -118,9 +147,6 @@ export default {
       if (this.items.length > 0) {
         return this.items[this.items.length - 1]['serial number']
       }
-    },
-    rows () { // get number of rows in the table used for pagination
-      return this.items.length
     }
   }
 }
