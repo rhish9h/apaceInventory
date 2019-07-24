@@ -375,8 +375,8 @@ export default {
     }
   },
   // asynchronous computed properties
-  asyncComputed: {
-  },
+  // asyncComputed: {
+  // },
   watch: {
     // to create suborder id - watch new order id && inputs.orderId
     newOrderId: function (val) {
