@@ -41,21 +41,20 @@
 
             <b-table id="matTable" class="small small" :current-page="currentPage" striped hover :items="items" :fields="fields"
             :per-page="perPage" @row-clicked="rowClicked" :small=true :filter='filter' @filtered='onFiltered'>
+
               <template slot="delete" slot-scope="row">
+                <!-- delete row component, send row and table name -->
+                <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="material master"></delete-row>
+              </template>
 
-                  <!-- delete row component, send row and table name -->
-                  <delete-row :rowProp="row" @reloadTable="allRecords" tableNameProp="material master"></delete-row>
+                <!-- collapse for updation of row -->
+              <template slot="row-details" slot-scope="row">
+                <b-card>
+                  <update-row :rowProp="row" tableNameProp="material master" :updateFieldsProp="updateFields" @rowUpdated="allRecords"></update-row>
+                  <!-- hello {{ row }} -->
+                </b-card>
+              </template>
 
-                   <!-- collapse for updation of row -->
-                  <template slot="row-details" slot-scope="row">
-                    <b-card>
-                      <!-- <update-row :rowProp="row" tableNameProp="material master" :updateFieldsProp="updateFields" @rowUpdated="allRecords"></update-row> -->
-                      hello {{ row }}
-                    </b-card>
-
-                  </template>
-
-                </template>
             </b-table>
         </div>
     </div>
@@ -122,10 +121,11 @@ export default {
     // after row click
     rowClicked: function (row) { // toggle _showDetails property on rowClick - later used for update
       row._showDetails = !row._showDetails
-      console.log(row._showDetails)
+      // console.log(row._showDetails)
     },
     addShowDetails: function () { // add property _showDetails to every row of the table
       this.items.forEach(function (element) { element._showDetails = false })
+      // console.log('in add show details' + ' ' + JSON.stringify(this.items[0]))
     },
     onFiltered (filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
