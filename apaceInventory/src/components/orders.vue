@@ -5,14 +5,23 @@
     <div>
       <div class="row">
         <!-- material issue button -->
-        <div class="col-md-2">
+        <div class="col-md-2 mr-3">
           <b-button class="mb-2 mt-2" variant='success' :disabled='buttonDisabled' v-b-toggle.issueMat>issue material</b-button>
         </div>
         <!-- add order button -->
         <div class="col-md-2 my-2">
           <b-button v-b-toggle.addOrderCollapse style="background-color: #ba04de">Add Order</b-button>
         </div>
+        <!-- add order details button -->
+        <b-col cols='2' class="my-2">
+          <b-button v-b-toggle.orderDetailsCollapse style="background-color: #f76c4d" :disabled='buttonDisabled'>Order Details</b-button>
+        </b-col>
       </div>
+
+      <!-- collapse for add order details button -->
+      <b-collapse id="orderDetailsCollapse" class="mb-1" v-if="this.rowSelectedInfo.length>0">
+        <add-order-details :rowProp='rowSelectedInfo[0]'></add-order-details>
+      </b-collapse>
 
       <!-- collapse for add order component -->
       <b-collapse id="addOrderCollapse" class="mb-1" v-model='showAddOrder'>
@@ -161,13 +170,15 @@
 import addOrder from './addOrder'
 import deleteRow from './tableManip/deleteRow'
 import updateOrder from './tableManip/updateRowFolder/updateOrder'
+import addOrderDetails from './addOrderDetails'
 
 export default {
   name: 'orders',
   components: {
     'add-order': addOrder,
     'delete-row': deleteRow,
-    'update-order': updateOrder
+    'update-order': updateOrder,
+    'add-order-details': addOrderDetails
   },
   data () {
     return {

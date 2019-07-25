@@ -114,7 +114,7 @@
 
       <b-row class="justify-content-md-center mt-4">
         <b-col class="text-center mt-2">
-          <b-button :disabled="canPush === 'false'" variant='success' class="btn-block" @click="pushOrder">Create Order</b-button>
+          <b-button :disabled="canPush === 'false'" class="btn-block" @click="pushOrder" style="background-color: #ba04de">Create Order</b-button>
         </b-col>
       </b-row>
 
