@@ -42,7 +42,8 @@
         <div id="prodMastTable">
 
             <b-table id="prodTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover
-            :items="items" :fields="fields" @row-clicked="rowClicked" :small=true :filter='filter' @filtered='onFiltered'>
+            :items="items" :fields="fields" @row-clicked="rowClicked" :small=true :filter='filter' @filtered='onFiltered'
+            sort-by="serial number" :sort-desc='true'>
 
                 <template slot="delete" slot-scope="row">
                   <!-- delete row component, send row and table name -->

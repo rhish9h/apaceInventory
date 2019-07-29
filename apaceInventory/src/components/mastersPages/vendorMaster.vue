@@ -43,7 +43,8 @@
         <div id="vendMastTable">
 
             <b-table id="vendTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover
-            :items="items" :fields="fields" @row-clicked="rowClicked" :small=true :filter='filter' @filtered='onFiltered'>
+            :items="items" :fields="fields" @row-clicked="rowClicked" :small=true :filter='filter' @filtered='onFiltered'
+            sort-by="vendor id" :sort-desc='true'>
 
                 <template slot="delete" slot-scope="row">
                   <!-- delete row component, send row and table name -->

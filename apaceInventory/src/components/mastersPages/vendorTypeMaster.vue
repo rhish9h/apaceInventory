@@ -43,7 +43,8 @@
         <div id="vendTypeMastTable">
 
             <b-table id="vendTypeTable" :per-page="perPage" :current-page="currentPage" class="small small" striped hover
-            :items="items" :fields="fields" @row-clicked="rowClicked" :small=true :filter='filter' @filtered="onFiltered">
+            :items="items" :fields="fields" @row-clicked="rowClicked" :small=true :filter='filter' @filtered="onFiltered"
+            sort-by="serial number" :sort-desc='true'>
 
                 <!-- buttons for delete -- slot-scope row used to access particular row-->
                 <template slot="delete" slot-scope="row">

@@ -147,7 +147,8 @@
       <!-- display sub orders table -->
       <b-table id="subOrdTable" selectable selectedVariant='success' select-mode='single' :per-page="perPage"
       :bordered=true :current-page="currentPage" class="small" striped hover :items="items" :fields='fields'
-      @row-selected='rowSelected' @row-clicked='rowClicked' :small='true' :filter='filter' @filtered='onFiltered'>
+      @row-selected='rowSelected' @row-clicked='rowClicked' :small='true' :filter='filter' @filtered='onFiltered'
+      sort-by="serial number" :sort-desc='true'>
 
         <!-- buttons for delete and update
         slot-scope row used to access particular row-->

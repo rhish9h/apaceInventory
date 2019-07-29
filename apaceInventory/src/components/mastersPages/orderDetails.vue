@@ -43,7 +43,8 @@
         <div id="tableDisplay">
 
          <b-table id="ordTable" :per-page="perPage" :current-page="currentPage" class="small" striped hover
-         :items="items" :fields="fields" @row-clicked="rowClicked" :small=true :filter='filter' @filtered='onFiltered'>
+         :items="items" :fields="fields" @row-clicked="rowClicked" :small=true :filter='filter' @filtered='onFiltered'
+         sort-by="serial number" :sort-desc='true'>
 
             <!-- buttons for delete and update
             slot-scope row used to access particular row-->

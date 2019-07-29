@@ -40,7 +40,8 @@
         <div id="matMastTable">
 
             <b-table id="matTable" class="small small" :current-page="currentPage" striped hover :items="items" :fields="fields"
-            :per-page="perPage" @row-clicked="rowClicked" :small=true :filter='filter' @filtered='onFiltered'>
+            :per-page="perPage" @row-clicked="rowClicked" :small=true :filter='filter' @filtered='onFiltered'
+            sort-by="serial number" :sort-desc='true'>
 
               <template slot="delete" slot-scope="row">
                 <!-- delete row component, send row and table name -->
