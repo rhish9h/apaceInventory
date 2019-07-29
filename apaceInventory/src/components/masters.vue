@@ -38,6 +38,16 @@
                   <vendor-type-master></vendor-type-master>
                 </b-card-text>
               </b-tab>
+              <b-tab title="Raw Material Stock">
+                <b-card-text>
+                  <raw-mat-stock></raw-mat-stock>
+                </b-card-text>
+              </b-tab>
+              <b-tab title="Logs">
+                <b-card-text>
+                  <logs-table></logs-table>
+                </b-card-text>
+              </b-tab>
             </b-tabs>
           </b-card>
           <!-- <b-tabs content-class="mt-3" class="overFlow">
@@ -56,6 +66,8 @@ import productMaster from './mastersPages/productMaster.vue'
 import uomMaster from './mastersPages/uomMaster.vue'
 import vendorMaster from './mastersPages/vendorMaster.vue'
 import vendorTypeMaster from './mastersPages/vendorTypeMaster.vue'
+import logsTable from './mastersPages/logs'
+import rawMatStock from './mastersPages/rawMatStock'
 
 export default {
   name: 'masters',
@@ -70,7 +82,9 @@ export default {
     'product-master': productMaster,
     'uom-master': uomMaster,
     'vendor-master': vendorMaster,
-    'vendor-type-master': vendorTypeMaster
+    'vendor-type-master': vendorTypeMaster,
+    'logs-table': logsTable,
+    'raw-mat-stock': rawMatStock
   }
 }
 </script>
