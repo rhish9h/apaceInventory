@@ -20,7 +20,7 @@
 
       <!-- collapse for add order details button -->
       <b-collapse id="orderDetailsCollapse" class="mb-1" v-if="this.rowSelectedInfo.length>0">
-        <add-order-details :rowProp='rowSelectedInfo[0]'></add-order-details>
+        <add-order-details :rowProp='rowSelectedInfo[0]' @rowUpdated='allRecords'></add-order-details>
       </b-collapse>
 
       <!-- collapse for add order component -->

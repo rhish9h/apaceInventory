@@ -47,7 +47,13 @@
       </b-row>
 
       <hr>
-<!-- {{sizeDetails}} - {{canPushDetails}} -->
+<!-- sizeDetails - canPushDetails: {{sizeDetails}} - {{canPushDetails}}
+<hr>
+rowProp: {{rowProp}}
+<hr>
+theresponse: {{theresponse}}
+<hr>
+uniqueSizes: {{uniqueSizes}} -->
       <b-row class="justify-content-md-center mb-2">
         <b-col cols='2'><strong>Size</strong></b-col>
         <b-col cols='2'><strong>Quantity</strong></b-col>
@@ -73,6 +79,10 @@
             <b-col cols='1'></b-col>
           </b-row>
         </b-col>
+      </b-row>
+
+      <b-row class="justify-content-md-center mb-1">
+        <b-col cols='2'><small class="text-danger" v-if="uniqueSizes === 'false'">error: duplicate sizes found</small></b-col>
       </b-row>
 
       <b-row class="mt-2">
@@ -110,7 +120,8 @@
 
       <b-row class="mt-3">
         <b-col>
-          <b-button class='btn-block' style="background-color: #f76c4d" :disabled="canPushDetails === 'false'">Push Order Details</b-button>
+          <b-button class='btn-block' style="background-color: #f76c4d" :disabled="canPushDetails === 'false'"
+          @click="pushDetails">Push Order Details</b-button>
         </b-col>
       </b-row>
     </b-card>
@@ -131,7 +142,8 @@ export default {
         }
       ],
       smsg: 'size field empty',
-      qmsg: 'quantity field empty'
+      qmsg: 'quantity field empty',
+      theresponse: 'noresponse' // response from get existing details
     }
   },
   methods: {
@@ -151,6 +163,86 @@ export default {
       } else {
         detail.canPush = 'true'
       }
+    },
+    getExistingDetails () { // populate form (size details) with existing data - per suborder id
+      this.axios.get('http://' + this.$hostname + '/api/getOneRow.php', {
+        // send actual table name and fields along with input data
+        params: {
+          tableName: 'order details',
+          columns: ['size', 'quantity'],
+          indexColumn: 'suborder id',
+          numValue: this.rowProp['sub-order id']
+        }
+      })
+        .then((response) => {
+          this.theresponse = response.data
+          if (response.data.length > 0) {
+            var vm = this // create another reference for this
+            this.sizeDetails = [] // empty size details
+            this.theresponse.forEach(function (elem) { // add all objects one by one in size details
+              vm.sizeDetails.push({
+                prodSize: elem.size,
+                quantity: elem.quantity,
+                canPush: 'true'
+              })
+            })
+          } else {
+            this.sizeDetails = [] // empty and add single empty row
+            this.addDetailRow()
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    },
+    addDetails () { // only the add details part of push details method
+      //
+      var fVal = []
+      var pro = this.rowProp
+      this.sizeDetails.forEach(function (elem) {
+        fVal.push([
+          ['suborder id', pro['sub-order id']],
+          ['size', elem.prodSize],
+          ['quantity', elem.quantity]
+        ])
+      })
+      // console.log(fVal)
+      this.axios.get('http://' + this.$hostname + '/api/pushMultiDetails.php', {
+        // send actual table name and fields along with input data
+        params: {
+          tableName: 'order details',
+          fieldValues: JSON.stringify(fVal)
+        }
+      })
+        .then((response) => {
+          alert('order details pushed successfully!')
+          // this.$emit('rowPushed') // emit event named row pushed - for reloading the table
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    },
+    updateTotal () {
+      var fVal = [['total', this.totalQuant]]
+      this.axios.get('http://' + this.$hostname + '/api/updateData.php', {
+        // send actual table name and fields along with input data
+        params: {
+          tableName: 'sub/order master',
+          fieldValues: JSON.stringify(fVal),
+          sno: this.rowProp['serial number']
+        }
+      })
+        .then((response) => {
+          this.$emit('rowUpdated') // emit event named row pushed - for reloading the table
+          alert('row updated')
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    },
+    pushDetails () { // delete existing records and push previous/updated + new records + update total
+      this.addDetails()
+      this.updateTotal()
     }
   },
   computed: {
@@ -161,7 +253,8 @@ export default {
           flag = 'false'
         }
       })
-      if (flag === 'true' && this.sizeDetails.length > 0) {
+      // all canPush flags - true, sizeDetails not empty, no duplicate sizes
+      if (flag === 'true' && this.sizeDetails.length > 0 && this.uniqueSizes === 'true') {
         return 'true'
       } else {
         return 'false'
@@ -173,6 +266,26 @@ export default {
         tot += parseInt(elem.quantity)
       })
       return tot
+    },
+    uniqueSizes () { // true if all sizes are unique else false - used in validations
+      var sizes = []
+      this.sizeDetails.forEach(function (elem) {
+        sizes.push(elem.prodSize)
+      })
+      var sizeset = Array.from(new Set(sizes))
+      if (sizeset.length === sizes.length) {
+        return 'true'
+      } else {
+        return 'false'
+      }
+    }
+  },
+  mounted () {
+    this.getExistingDetails()
+  },
+  watch: {
+    rowProp () {
+      this.getExistingDetails()
     }
   }
 }
