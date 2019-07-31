@@ -41,8 +41,22 @@
     {{ message }}
 
     <div class="row">
-      <div class="col-md-2 mt-3"><b-button variant='primary' @click="pushMaterial">push material</b-button></div>
+      <div class="col-md-2 mt-3"><b-button variant='primary' @click="modalShow=!modalShow">push material</b-button></div>
     </div>
+
+     <!-- modal to confirm material issue -->
+      <b-modal centered title="Confirm" v-model="modalShow" size='sm' header-bg-variant='dark' header-text-variant='light'>
+        <div><p>Issue / Inward material?</p></div>
+        <div slot="modal-footer" class="w-100">
+          <!-- cancel -->
+          <b-button variant="primary" size="sm" class="float-left" @click="modalShow=!modalShow">
+            Cancel
+          </b-button>
+
+          <!-- issue material -->
+          <b-button variant='success' size='sm' class="float-right" @click="modalShow=!modalShow; pushMaterial()">Confirm</b-button>
+        </div>
+      </b-modal>
 
   </div>
 </template>
@@ -65,7 +79,8 @@ export default {
       inward: 0,
       dateip: new Date().toISOString().slice(0, 10),
       matIssRow: '',
-      issuedBy: ''
+      issuedBy: '',
+      modalShow: false
     }
   },
   methods: {

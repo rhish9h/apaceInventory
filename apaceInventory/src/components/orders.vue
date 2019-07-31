@@ -166,18 +166,18 @@
       </b-table>
 
       <!-- modal to confirm material issue -->
-    <b-modal centered title="Confirm" v-model="modalShow" size='sm' header-bg-variant='dark' header-text-variant='light'>
-      <div><p>Issue / Inward material?</p></div>
-      <div slot="modal-footer" class="w-100">
-        <!-- cancel -->
-        <b-button variant="primary" size="sm" class="float-left" @click="modalShow=!modalShow">
-          Cancel
-        </b-button>
+      <b-modal centered title="Confirm" v-model="modalShow" size='sm' header-bg-variant='dark' header-text-variant='light'>
+        <div><p>Issue / Inward material?</p></div>
+        <div slot="modal-footer" class="w-100">
+          <!-- cancel -->
+          <b-button variant="primary" size="sm" class="float-left" @click="modalShow=!modalShow">
+            Cancel
+          </b-button>
 
-        <!-- issue material -->
-        <b-button variant='success' size='sm' class="float-right" @click="modalShow=!modalShow; pushMaterial()">Confirm</b-button>
-      </div>
-    </b-modal>
+          <!-- issue material -->
+          <b-button variant='success' size='sm' class="float-right" @click="modalShow=!modalShow; pushMaterial()">Confirm</b-button>
+        </div>
+      </b-modal>
     </div>
 </template>
 
@@ -262,7 +262,7 @@ export default {
     // method to rerender table and the add order component
     addOrderRowPushed () {
       this.allRecords()
-      this.rerenderAddOrder++
+      // this.rerenderAddOrder++
     },
     // when issue / inward is changed from material issue/inward rows
     issInwChanged (row) {
@@ -344,6 +344,7 @@ export default {
           this.items = response.data
           this.totalRows = this.items.length
           this.addShowDetails() // call to add show details property to every row
+          this.rerenderAddOrder++
         })
         .catch(function (error) {
           console.log(error)
