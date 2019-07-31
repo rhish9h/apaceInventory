@@ -82,9 +82,23 @@
 
     <b-row class="mt-2">
       <b-col>
-        <b-button @click="pushUpdate" class="btn-block" variant='info' :disabled='error === "true"'>Push Update</b-button>
+        <b-button @click="showUpdateModal" class="btn-block" variant='info' :disabled='error === "true"'>Push Update</b-button>
       </b-col>
     </b-row>
+
+    <!-- modal to confirm updation -->
+    <b-modal centered title="Confirm" v-model="modalShow" size='sm' header-bg-variant='info' header-text-variant='light'>
+      <div><p>Confirm update:</p></div>
+      <div slot="modal-footer" class="w-100">
+        <!-- cancel -->
+        <b-button variant="primary" size="sm" class="float-left" @click="modalShow=!modalShow">
+          Cancel
+        </b-button>
+
+        <!-- update -->
+        <b-button variant="info" size='sm' class="float-right" @click="modalShow=!modalShow; pushUpdate(rowProp)">Update</b-button>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -110,10 +124,14 @@ export default {
       },
       vendorOptions: ['Select vendor'],
       productOptions: ['Select product'],
-      errorMsg: 'product cannot be Select product'
+      errorMsg: 'product cannot be Select product',
+      modalShow: false
     }
   },
   methods: {
+    showUpdateModal () {
+      this.modalShow = true
+    },
     // get vendor dropdown list
     getVendorList () {
       this.axios.get('http://' + this.$hostname + '/api/getDropDown.php', {

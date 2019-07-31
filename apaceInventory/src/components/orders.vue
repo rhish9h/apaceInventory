@@ -111,7 +111,7 @@
 
               <!-- button to PUSH ALL MATERIAL ISSUES, also updates stock -->
               <div class="row">
-                <div class="col-md-2 mt-3"><b-button variant='primary' :disabled='!canIssue' @click="pushMaterial">push material</b-button></div>
+                <div class="col-md-2 mt-3"><b-button variant='primary' :disabled='!canIssue' @click="modalShow=!modalShow">push material</b-button></div>
               </div>
             </b-card>
           </div>
@@ -164,6 +164,20 @@
           </b-card>
         </template>
       </b-table>
+
+      <!-- modal to confirm material issue -->
+    <b-modal centered title="Confirm" v-model="modalShow" size='sm' header-bg-variant='dark' header-text-variant='light'>
+      <div><p>Issue / Inward material?</p></div>
+      <div slot="modal-footer" class="w-100">
+        <!-- cancel -->
+        <b-button variant="primary" size="sm" class="float-left" @click="modalShow=!modalShow">
+          Cancel
+        </b-button>
+
+        <!-- issue material -->
+        <b-button variant='success' size='sm' class="float-right" @click="modalShow=!modalShow; pushMaterial()">Confirm</b-button>
+      </div>
+    </b-modal>
     </div>
 </template>
 
@@ -240,7 +254,8 @@ export default {
       issPerSubOrder: [], // array that holds material issues per suborder - got from backend
       rerenderAddOrder: 0, // key used to rerender add order component
       filter: null,
-      totalRows: 1
+      totalRows: 1,
+      modalShow: false
     }
   },
   methods: {

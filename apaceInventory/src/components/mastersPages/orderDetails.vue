@@ -3,6 +3,7 @@
 
 <template>
     <div>
+
       <b-row>
         <b-col>
           <!-- add record into the table -->

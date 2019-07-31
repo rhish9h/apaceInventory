@@ -121,10 +121,24 @@ uniqueSizes: {{uniqueSizes}} -->
       <b-row class="mt-3">
         <b-col>
           <b-button class='btn-block' style="background-color: #f76c4d" :disabled="canPushDetails === 'false'"
-          @click="pushDetails">Push Order Details</b-button>
+          @click="showDetailModal">Push Order Details</b-button>
         </b-col>
       </b-row>
     </b-card>
+
+    <!-- modal to confirm updation -->
+    <b-modal centered title="Confirm" v-model="modalShow" size='sm' header-bg-variant='dark' header-text-variant='light'>
+      <div><p>Push order details?</p></div>
+      <div slot="modal-footer" class="w-100">
+        <!-- cancel -->
+        <b-button variant="primary" size="sm" class="float-left" @click="modalShow=!modalShow">
+          Cancel
+        </b-button>
+
+        <!-- update -->
+        <b-button style="background-color: #f76c4d" size='sm' class="float-right" @click="modalShow=!modalShow; pushDetails()">Push</b-button>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -143,10 +157,14 @@ export default {
       ],
       smsg: 'size field empty',
       qmsg: 'quantity field empty',
-      theresponse: 'noresponse' // response from get existing details
+      theresponse: 'noresponse', // response from get existing details
+      modalShow: false
     }
   },
   methods: {
+    showDetailModal () { // to show confirmation modal - push to confirm the push
+      this.modalShow = true
+    },
     addDetailRow () { // for adding row of order detail
       this.sizeDetails.push({
         prodSize: '',

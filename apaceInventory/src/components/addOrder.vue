@@ -114,12 +114,26 @@
 
       <b-row class="justify-content-md-center mt-4">
         <b-col class="text-center mt-2">
-          <b-button :disabled="canPush === 'false'" class="btn-block" @click="pushOrder" style="background-color: #ba04de">Create Order</b-button>
+          <b-button :disabled="canPush === 'false'" class="btn-block" @click="showOrderModal" style="background-color: #ba04de">Create Order</b-button>
         </b-col>
       </b-row>
 
       </b-container>
     </b-card>
+
+    <!-- modal to confirm addition -->
+    <b-modal centered title="Confirm" v-model="modalShow" size='sm' header-bg-variant='dark' header-text-variant='light'>
+      <div><p>Create new order?</p></div>
+      <div slot="modal-footer" class="w-100">
+        <!-- cancel -->
+        <b-button variant="primary" size="sm" class="float-left" @click="modalShow=!modalShow">
+          Cancel
+        </b-button>
+
+        <!-- add -->
+        <b-button style="background-color: #ba04de" size='sm' class="float-right" @click="modalShow=!modalShow; pushOrder()">Create</b-button>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -149,10 +163,14 @@ export default {
       newOrder: 'false',
       subOrderIdList: '', // used in computation of suborder from existing order id
       vendorOptions: ['Select vendor'],
-      productOptions: ['Select product']
+      productOptions: ['Select product'],
+      modalShow: false
     }
   },
   methods: {
+    showOrderModal () { // to show confirmation modal - push to confirm the push
+      this.modalShow = true
+    },
     // push order input data to database
     pushOrder () {
       // create fVal - array of arrays with field as key and input as value
