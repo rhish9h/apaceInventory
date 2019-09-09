@@ -3,12 +3,6 @@
 <template>
   <div>
     <b-card>
-      <!-- pdf button -->
-      <b-row>
-        <b-col>
-          <b-button id="pdfbutton" size='sm' @click="convertToPdf">convert to pdf</b-button>
-        </b-col>
-      </b-row>
       <b-row>
         <b-col cols='5'>
           <strong>Order Creation Date: </strong> {{ rowProp['date order received'] }}
@@ -95,6 +89,10 @@ uniqueSizes: {{uniqueSizes}} -->
       </b-row>
 
       <b-row class="mt-2">
+        <!-- pdf button -->
+        <b-button id="pdfbutton" size='sm' @click="convertToPdf" class="ml-4" variant="warning">
+          <img src="@/assets/pdf_logo.png" alt="convert to pdf" height="40em" width="40em">
+        </b-button>
         <b-col cols='1' offset='4'>
           <b-button size='sm' @click="addDetailRow" variant='success'><strong>+</strong></b-button>
         </b-col>
