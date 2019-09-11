@@ -1,3 +1,5 @@
+// collapse for 'Order Details' button
+
 <template>
   <div>
     <b-card>
@@ -54,6 +56,7 @@ rowProp: {{rowProp}}
 theresponse: {{theresponse}}
 <hr>
 uniqueSizes: {{uniqueSizes}} -->
+
       <b-row class="justify-content-md-center mb-2">
         <b-col cols='2'><strong>Size</strong></b-col>
         <b-col cols='2'><strong>Quantity</strong></b-col>
@@ -86,6 +89,10 @@ uniqueSizes: {{uniqueSizes}} -->
       </b-row>
 
       <b-row class="mt-2">
+        <!-- pdf button -->
+        <b-button id="pdfbutton" size='sm' @click="convertToPdf" class="ml-4" variant="warning">
+          <img src="@/assets/pdf_logo.png" alt="convert to pdf" height="40em" width="40em">
+        </b-button>
         <b-col cols='1' offset='4'>
           <b-button size='sm' @click="addDetailRow" variant='success'><strong>+</strong></b-button>
         </b-col>
@@ -143,6 +150,9 @@ uniqueSizes: {{uniqueSizes}} -->
 </template>
 
 <script>
+// import {jsPDF as JsPDF} from 'jspdf'
+import 'jspdf-autoTable'
+
 export default {
   name: 'addOrderDetails',
   props: ['rowProp'],
@@ -162,6 +172,75 @@ export default {
     }
   },
   methods: {
+    // convert to pdf
+    convertToPdf () {
+      const JsPDF = require('jspdf')
+      var doc = new JsPDF()
+      doc.text('Order Details', 105, 10, 'center')
+      doc.setFontSize(11)
+
+      // left side
+      doc.text('Sub-order id: ' + this.rowProp['sub-order id'], 10, 20)
+      doc.text('Order Id: ' + this.rowProp['order id'], 10, 25)
+      doc.text('Order Code: ' + this.rowProp['order code'], 10, 30)
+      doc.text('Order Name: ' + this.rowProp['order name'], 10, 35)
+      doc.text('Vendor: ' + this.rowProp['vendor'], 10, 40)
+      doc.text('Folder Reference: ' + this.rowProp['folder reference'], 10, 45)
+
+      // right side
+      doc.text('Product: ' + this.rowProp['product'], 200, 20, 'right')
+      doc.text('Order Creation Date: ' + this.rowProp['date order received'], 200, 25, 'right')
+      doc.text('Order Issue Date: ' + this.rowProp['date issued'], 200, 30, 'right')
+      doc.text('Promised Delivery Date: ' + this.rowProp['promised delivery date'], 200, 35, 'right')
+      doc.text('Pattern: ' + this.rowProp['pattern'], 200, 40, 'right')
+
+      // details table
+      var tempBody = []
+      this.sizeDetails.forEach(function (elem) {
+        tempBody.push([elem.prodSize, elem.quantity])
+      })
+      // table has auto page break
+      doc.autoTable({
+        styles: {halign: 'center'},
+        head: [['Size', 'Quantity']],
+        body: tempBody,
+        startY: 50
+      })
+
+      var nextLine = doc.lastAutoTable.finalY + 5 // align according to table
+      if (nextLine > 292) { // split if max not fitting on same page
+        doc.addPage()
+        nextLine = 10
+      }
+      doc.text('Total: ' + this.totalQuant, 105, nextLine, 'center') // total
+      nextLine += 10
+
+      // print remaining details in loop
+      var PrintBuffer = ['product related instructions', 'product notes', 'printing details', 'printing notes']
+      var BufferSize = 0
+      var globThis = this
+
+      PrintBuffer.forEach(function (elem) {
+        BufferSize = globThis.rowProp[elem].split('\n').length * 5 // size of each detail's data
+        if (nextLine > (297 - BufferSize - 5)) { // length of a4 paper is 297
+          doc.addPage() // split page if data not fitting properly
+          nextLine = 10
+        }
+        var FirstUpper = elem.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') // get first character uppercase
+        doc.text(FirstUpper + ': \r' + globThis.rowProp[elem], 10, nextLine)
+        nextLine = BufferSize + nextLine + 10 // check for new lines
+      })
+
+      // var prodRelInstSize = this.rowProp['product related instructions'].split('\n').length * 5
+      // if (nextLine > (297 - prodRelInstSize - 5)) { // split page if data not fitting properly
+      //   doc.addPage()
+      //   nextLine = 10
+      // }
+      // doc.text('Product Related Instructions: \r' + this.rowProp['product related instructions'], 10, nextLine)
+      // nextLine = prodRelInstSize + nextLine + 5 // check for new lines
+
+      doc.save('ord_det_' + this.rowProp['sub-order id'] + '.pdf') // save as
+    },
     showDetailModal () { // to show confirmation modal - push to confirm the push
       this.modalShow = true
     },

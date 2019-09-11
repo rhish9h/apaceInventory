@@ -6,7 +6,7 @@
       <div class="row">
         <!-- material issue button -->
         <div class="col-md-2 mr-3">
-          <b-button class="mb-2 mt-2" variant='success' :disabled='buttonDisabled' v-b-toggle.issueMat>issue material</b-button>
+          <b-button class="mb-2 mt-2" variant='success' :disabled='buttonDisabled' v-b-toggle.issueMat>Issue Material</b-button>
         </div>
         <!-- add order button -->
         <div class="col-md-2 my-2">
@@ -35,6 +35,10 @@
           <div>
 
             <div class="pt-2 pb-2 rounded mb-4 ml-1 mr-1" style='background-color: #99ccff'>
+              <!-- pdf button -->
+              <b-button id="pdfbutton" size='sm' @click="convertToPdf" class="mr-4 float-right" variant="warning">
+                <img src="@/assets/pdf_logo.png" alt="convert to pdf" height="40em" width="40em">
+              </b-button>
               <div class="ml-2">Order Id: <strong>{{ rowSelectedInfo[0]['order id'] }}</strong></div>
               <div class="ml-2">Sub-Order Id: <strong>{{ rowSelectedInfo[0]['sub-order id'] }}</strong></div>
               <div class="ml-2">Order Name: <strong>{{ rowSelectedInfo[0]['order name'] }}</strong></div>
@@ -44,7 +48,7 @@
                 <b-card class="ml-2 mr-2 mb-1 mt-1">
                   <!-- print table containing material issues per suborder -->
                   <!-- {{issPerSubOrder.data}} -->
-                  <b-table striped hover :items='issPerSubOrder.data' :small=true></b-table>
+                  <b-table striped hover :items='issPerSubOrder.data' :small=true id='issueTable'></b-table>
                 </b-card>
               </div>
             </div>
@@ -186,6 +190,7 @@ import addOrder from './addOrder'
 import deleteRow from './tableManip/deleteRow'
 import updateOrder from './tableManip/updateRowFolder/updateOrder'
 import addOrderDetails from './addOrderDetails'
+import 'jspdf-autoTable'
 
 export default {
   name: 'orders',
@@ -259,6 +264,26 @@ export default {
     }
   },
   methods: {
+    // convert to pdf
+    convertToPdf () {
+      const JsPDF = require('jspdf')
+      var doc = new JsPDF()
+      doc.text('Issue Material', 105, 10, 'center') // heading
+      doc.setFontSize(11)
+
+      // initial details
+      doc.text('Order Id:' + this.rowSelectedInfo[0]['order id'], 10, 20)
+      doc.text('Sub-Order Id: ' + this.rowSelectedInfo[0]['sub-order id'], 10, 25)
+      doc.text('Order Name: ' + this.rowSelectedInfo[0]['order name'], 10, 30)
+      // convert table as it is
+      doc.autoTable({
+        styles: {halign: 'center'},
+        html: '#issueTable',
+        startY: 35
+      })
+
+      doc.save('iss_mat_' + this.rowSelectedInfo[0]['sub-order id'] + '.pdf') // save as
+    },
     // method to rerender table and the add order component
     addOrderRowPushed () {
       this.allRecords()
