@@ -19,6 +19,7 @@ Materials- contains issue of material without selecting a particular order
 Prerequisites: 
     1. node js
     2. xampp
+    3. git
 
 1. clone apaceInventory
 2. cd to apaceInventory (in console)
