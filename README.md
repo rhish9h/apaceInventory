@@ -51,3 +51,14 @@ eg 192.168.0.103
 2. (on host computer) cd to apaceInventory-master/apaceInventory-master/apaceInventory/src/router  
 replace localhost with the ip of the host in index.js (run this command), change ip if needed (in the following command)
 > (Get-Content index.js).replace('localhost', '192.168.0.103') | Set-Content index.js
+
+## Batch file for running apace server
+
+open notepad, paste following code in it, save it with .bat extension (all files)  
+eg. apace_server.bat (choose all files options)
+> note - the path after cd should be the path of your apaceInventory folder on your machine
+```
+cd C:\Users\apace\Downloads\apaceInventory-master\apaceInventory-master\apaceInventory  
+npm run dev
+```
+after saving, double click on icon to run the server
