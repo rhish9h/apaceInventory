@@ -20,17 +20,20 @@ Prerequisites:
     1. node js
     2. xampp
     3. git
+    (make sure to give all permissions - private and public)
 
-1. clone apaceInventory
-2. cd to apaceInventory (in console)
+1. clone apaceInventory, extract files
+2. cd to apaceInventory-master/apaceInventory-master/apaceInventory (in console)
     > npm install
-    > npm install --save axios bootstrap-vue bootstrap/dist/css/bootstrap.css vue-axios
-3. clone apaceInventoryBackend
-    -transfer folder 'api' to htdocs in xampp
+    > npm audit fix
+    > npm install --save axios bootstrap-vue vue-axios
+3. clone apaceInventoryBackend from github.com/rhish9h/apaceInventoryBackend, extract files
+    -transfer folder 'apaceInventoryBackend-master' from apaceInventoryBackend-master to htdocs in C:/xampp
+    -rename this folder 'apaceInventoryBackend-master' to 'api'
 4. open phpmyadmin (type localhost/phpmyadmin in browser) 
     -create database of name 'apace'
-    -import apace(1) in phpmyadmin from folder 'api'
-5. cd to apaceInventory
+    -import apace in phpmyadmin from folder 'api'
+5. cd to apaceInventory-master/apaceInventory-master/apaceInventory
     > npm run dev
 6. open xampp controller
     -start Apache
