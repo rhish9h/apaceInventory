@@ -23,7 +23,7 @@ Prerequisites:
 (make sure to give all permissions - private and public)
 
 Steps:
-1. clone apaceInventory, extract files
+1. clone apaceInventory, extract files  
 2. cd to apaceInventory-master/apaceInventory-master/apaceInventory (in console)
     > npm install  
     > npm audit fix  
@@ -39,3 +39,15 @@ Steps:
 6. open xampp controller  
 -start Apache  
 -start MySQL
+
+## Server configuration
+
+Set up for devices on same network to connect to the server  
+  
+1. (on host computer) open powershell
+> ipconfig
+Get IPv4 address of wireless lan adapter WiFi  
+eg 192.168.0.103
+2. (on host computer) cd to apaceInventory-master/apaceInventory-master/apaceInventory/src/router  
+replace localhost with the ip of the host (run this command), change ip if needed (in the following command)
+> (Get-Content index.js).replace('localhost', '192.168.0.103') | Set-Content index.js
