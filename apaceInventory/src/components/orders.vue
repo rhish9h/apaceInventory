@@ -277,7 +277,7 @@ export default {
       doc.text('Order Name: ' + this.rowSelectedInfo[0]['order name'], 10, 30)
       // convert table as it is
       doc.autoTable({
-        styles: {halign: 'center'},
+        styles: {halign: 'center', lineWidth: 0.2, lineColor: [0, 0, 0]},
         html: '#issueTable',
         startY: 35
       })
