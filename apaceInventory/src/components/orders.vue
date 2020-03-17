@@ -420,6 +420,9 @@ export default {
       var options = this.options
       var hostname = this.$hostname
       var thisObj = this
+      // message used to display in the alert box
+      var alertMsgDetails = 'Materials issued:\n'
+      alertMsgDetails += 'Material id   :   Material code   :   Net Issued\n\n'
       this.issInwRow.forEach(function (element) {
         let fVal = []
         for (let key in inputs) {
@@ -430,7 +433,10 @@ export default {
         fVal.push(['quantity issued', element.issued])
         fVal.push(['quantity returned', element.inward])
         fVal.push(['net usage', element.netIssue])
-        fVal.push(['material code', options.find(o => o.value === element.selected)['text']]) // find the material code from options such that value matches selected
+        var fValMatCode = options.find(o => o.value === element.selected)['text']
+        fVal.push(['material code', fValMatCode]) // find the material code from options such that value matches selected
+        alertMsgDetails += element.selected + ' : ' + fValMatCode + ' : ' + element.netIssue + '\n'
+
         axios.get('http://' + hostname + '/api/pushData.php', {
           // send actual table name and fields along with input data
           params: {
@@ -440,18 +446,23 @@ export default {
         })
           .then((response) => {
             thisObj.getMatIssPerSub() // reload table - by getting mat iss info again
-            alert('material pushed successfully!')
           })
           .catch(function (error) {
             console.log(error)
+            alert('Error in issuing material:\n' + element.selected + ' : ' + fValMatCode + ' : ' + element.netIssue)
           })
       })
+      alert(alertMsgDetails)
     },
     // update material stock
     updateStock () {
       var hostname = this.$hostname
+      // message used to display in the alert box
+      var alertMsgDetails = 'Raw Material Stock Updated:\n'
+      alertMsgDetails += 'Material id   :   Updated Stock\n\n'
       this.issInwRow.forEach(function (element) {
         var axios = require('axios')
+        alertMsgDetails += element.selected + ' : ' + element.updatedStock + '\n'
         axios.get('http://' + hostname + '/api/updateData.php', {
           // send actual table name and fields along with input data
           params: {
@@ -465,12 +476,14 @@ export default {
           }
         })
           .then((response) => {
-            alert('stock updated!')
+            this.$root.$emit('rawMatStockAdded') // emit event named rawMatStockAdded - for reloading the raw material stock table
           })
           .catch(function (error) {
             console.log(error)
+            alert('Error in updating raw material:\n' + element.selected + ' : ' + this.options.find(o => o.value === element.selected)['text'] + ' : ' + element.netIssue)
           })
       })
+      alert(alertMsgDetails)
     },
     // on button click to PUSH ALL MATERIALS
     pushMaterial: function () {
