@@ -159,6 +159,7 @@ export default {
       })
         .then((response) => {
           alert('stock updated!')
+          this.$root.$emit('rawMatStockAdded') // emit event named rawMatStockAdded - for reloading the raw material stock table
         })
         .catch(function (error) {
           console.log(error)
