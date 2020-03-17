@@ -192,7 +192,7 @@
 
                   </b-form>
                 </p>
-                <b-button variant="success" @click="pushProduct">add record</b-button>
+                <b-button variant="success" @click="addRecord">add record</b-button>
                 </b-card>
             </b-collapse>
         </div>
@@ -229,6 +229,13 @@ export default {
     }
   },
   methods: {
+
+    // add record - in material master and raw material stock (only material id, rest is 0)
+    addRecord: function () {
+      this.pushProduct()
+      this.pushRawMaterialStock()
+    },
+
     // push product data into product master table
     pushProduct: function () {
       // create fVal - array of arrays with field as key and input as value
@@ -248,12 +255,37 @@ export default {
       })
         .then((response) => {
           this.$emit('rowPushed') // emit event named row pushed - for reloading the table
-          alert('row added successfully!')
+          alert('Material id ' + this['material id'] + ' added in material master.')
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    },
+
+    // create row in raw material stock
+    pushRawMaterialStock: function () {
+      // create fVal - array of arrays with field as key and input as value
+      let fVal = []
+      fVal.push(['material id', this['material id']])
+      fVal.push(['stock', 0])
+      fVal.push(['purchase price', 0])
+      fVal.push(['stock value', 0])
+      this.axios.get('http://' + this.$hostname + '/api/pushData.php', {
+        // send actual table name and fields along with input data
+        params: {
+          tableName: 'raw material stock',
+          fieldValues: JSON.stringify(fVal)
+        }
+      })
+        .then((response) => {
+          this.$root.$emit('rawMatStockAdded') // emit event named rawMatStockAdded - for reloading the raw material stock table
+          alert('Material id ' + this['material id'] + ' added in raw material stock.')
         })
         .catch(function (error) {
           console.log(error)
         })
     }
+
   },
   computed: {
     'material id': function () { // compute material id - first letter of type + last serial number of table (passed as prop)

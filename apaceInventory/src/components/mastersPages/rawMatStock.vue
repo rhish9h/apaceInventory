@@ -79,6 +79,13 @@ export default {
   },
   beforeMount () {
     this.allRecords()
+  },
+
+  mounted () {
+    // event handler for rawMatStockAdded -> used when row is added in material master and raw material stock table needs reload
+    this.$root.$on('rawMatStockAdded', () => {
+      this.allRecords()
+    })
   }
 }
 </script>
