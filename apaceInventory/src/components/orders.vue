@@ -68,6 +68,14 @@
                 </div>
               </div>
 
+              <!-- message to be displayed if person issuing order not stated -->
+              <!-- only displays when issuedBy input is empty, push material button stays disabled until name of person is filled -->
+              <div v-if="!issuedBy" class="row mt">
+                <div class="col-md-3 offset-md-3 pl-4" style="color: red">
+                  enter name of person issuing
+                </div>
+              </div>
+
               <hr>
 
               <div class="row font-weight-bold">
@@ -561,12 +569,16 @@ export default {
     // checks message of all objects in issInwRow, can issue if all messages are ''
     canIssue () {
       var rowlen = this.issInwRow.length
-      if (rowlen < 1) {
+      if (rowlen < 1) { // nothing being issued
         return false
       } else {
         for (let i = 0; i < rowlen; i++) {
-          if (this.issInwRow[i].message !== '') {
+          if (this.issInwRow[i].message !== '') { // errors in new issue
             return false
+          } else {
+            if (!this.issuedBy) { // issued by person not stated
+              return false
+            }
           }
         }
         return true
