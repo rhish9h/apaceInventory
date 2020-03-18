@@ -4,18 +4,22 @@
 <template>
     <div>
       <div class="row">
-        <!-- material issue button -->
-        <div class="col-md-2 mr-3">
-          <b-button class="mb-2 mt-2" variant='success' :disabled='buttonDisabled' v-b-toggle.issueMat>Issue Material</b-button>
-        </div>
+
         <!-- add order button -->
         <div class="col-md-2 my-2">
           <b-button v-b-toggle.addOrderCollapse style="background-color: #ba04de">Add Order</b-button>
         </div>
+
         <!-- add order details button -->
         <b-col cols='2' class="my-2">
           <b-button v-b-toggle.orderDetailsCollapse style="background-color: #f76c4d" :disabled='buttonDisabled'>Order Details</b-button>
         </b-col>
+
+        <!-- material issue button -->
+        <div class="col-md-2 mr-3">
+          <b-button class="mb-2 mt-2" variant='success' :disabled='buttonDisabled' v-b-toggle.issueMat>Issue Material</b-button>
+        </div>
+
       </div>
 
       <!-- collapse for add order details button -->
