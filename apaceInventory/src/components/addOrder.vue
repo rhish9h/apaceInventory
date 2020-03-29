@@ -113,8 +113,17 @@
       </b-row>
 
       <b-row class="justify-content-md-center mt-4">
+        <!-- button to get previous order data - populate the add suborder page -->
+        <b-col cols='1' class="text-center mt-2">
+          <b-button @click="getLatestSuborder">prev</b-button>
+        </b-col>
+        <!-- button to submit form - create order -->
         <b-col class="text-center mt-2">
           <b-button :disabled="canPush === 'false'" class="btn-block" @click="showOrderModal" style="background-color: #ba04de">Create Order</b-button>
+        </b-col>
+        <!-- button to reset form - get default values -->
+        <b-col cols='1' class="text-center mt-2">
+          <b-button @click="resetAddOrderForm">reset</b-button>
         </b-col>
       </b-row>
 
@@ -327,6 +336,47 @@ export default {
         .catch(function (error) {
           console.log(error)
         })
+    },
+    // get latest suborder that was added - to populate the add suborder page with previous data
+    getLatestSuborder () {
+      this.axios.get('http://' + this.$hostname + '/api/getLatestRow.php', {
+        // send actual table name for which latest row is needed
+        params: {
+          tableName: 'sub/order master'
+        }
+      })
+        .then((response) => {
+          let latestSuborder = response.data[0]
+          // console.log('debug latest suborder: ', latestSuborder)
+          // console.log('debug inputs: ', this.inputs)
+          // this.inputs.dateOrderRcvd = latestSuborder['date order received']
+          // this.inputs.dateIssued = latestSuborder['date issued']
+          // this.inputs.promDelDate = latestSuborder['promised delivery date']
+          this.inputs.productSelected = latestSuborder['pattern']
+          this.inputs.vendorSelected = latestSuborder['vendor']
+          this.inputs.folderReference = latestSuborder['folder reference']
+          this.inputs.prodRelInstr = latestSuborder['product related instructions']
+          this.inputs.prodRelNotes = latestSuborder['product notes']
+          this.inputs.printNotes = latestSuborder['printing notes']
+          this.inputs.printDetails = latestSuborder['printing details']
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    },
+    // function to reset add order form - get default input values
+    resetAddOrderForm () {
+      this.inputs.dateOrderRcvd = new Date().toISOString().slice(0, 10)
+      this.inputs.dateIssued = new Date().toISOString().slice(0, 10)
+      this.inputs.promDelDate = new Date().toISOString().slice(0, 10)
+      this.inputs.vendorSelected = 'Select vendor'
+      this.inputs.folderReference = ''
+      this.inputs.productSelected = 'Select product'
+      this.inputs.prodRelInstr = ''
+      this.inputs.prodRelNotes = ''
+      this.inputs.printNotes = ''
+      this.inputs.printDetails = ''
+      // console.log('debug inputs in reset add order form: ', this.inputs)
     }
   },
   computed: {
