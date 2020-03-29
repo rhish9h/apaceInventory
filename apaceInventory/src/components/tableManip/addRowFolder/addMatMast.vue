@@ -270,6 +270,7 @@ export default {
       fVal.push(['stock', 0])
       fVal.push(['purchase price', 0])
       fVal.push(['stock value', 0])
+      fVal.push(['material code', this['material code']])
       this.axios.get('http://' + this.$hostname + '/api/pushData.php', {
         // send actual table name and fields along with input data
         params: {

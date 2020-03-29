@@ -45,6 +45,7 @@ export default {
       fields: [
         {key: 'serial number', sortable: true},
         {key: 'material id', sortable: true},
+        {key: 'material code', sortable: true},
         {key: 'stock', sortable: true},
         {key: 'purchase price', sortable: true},
         {key: 'stock value', sortable: true},
