@@ -79,19 +79,20 @@
               <hr>
 
               <div class="row font-weight-bold">
-                <div class="col-md-5"><center>material code</center></div>
+                <div class="col-md-3"><center>material code</center></div>
                 <div class="col-md-1">material id</div>
                 <div class="col-md-1">quantity issued</div>
                 <div class="col-md-1">quantity inward</div>
                 <div class="col-md-1">net issued</div>
                 <div class="col-md-1">stock available</div>
                 <div class="col-md-1">predicted stock</div>
+                <div class="col-md-2">notes</div>
               </div>
 
               <!-- loop for adding material issue/inward row -->
 
               <div class="row mt-1" v-for="(row, index) in issInwRow" :key='index'>
-                <div class="col-md-5">
+                <div class="col-md-3">
                   <b-form-select size='sm' @change="matCodeChanged(row)" v-if="options.length > 1" v-model="row.selected" :options="options"></b-form-select>
                   <!-- v-if added to check if options is populated -->
                 </div>
@@ -107,6 +108,8 @@
                 <div class="mt-1 col-md-1" @change="issInwChanged(row)">{{ row.rawAvail }}</div>
                 <!-- predicted stock -->
                 <div class="mt-1 col-md-1">{{ row.updatedStock }}</div>
+                <!-- notes -->
+                <div class="mt-1 col-md-2"><b-input size='sm' type='text' v-model='row.notes'></b-input></div>
                 <!-- delete row button -->
                 <div class="col-md-1"><b-button size='sm' variant='danger' @click="remMatRow(index)"><strong>-</strong></b-button></div>
 
@@ -265,7 +268,8 @@ export default {
           rawAvail: -99,
           updatedStock: -99,
           message: 'select material code',
-          purchasePrice: -99
+          purchasePrice: -99,
+          notes: ''
         }
       ], // array that holds all material issues/inwards to be done at a time
       issPerSubOrder: [], // array that holds material issues per suborder - got from backend
@@ -337,7 +341,8 @@ export default {
         rawAvail: -99,
         updatedStock: -99,
         message: 'select material code',
-        purchasePrice: -99
+        purchasePrice: -99,
+        notes: ''
       })
     },
     // call backend to get all material issues per suborder id
@@ -346,7 +351,7 @@ export default {
         // send actual table name and fields along with input data
         params: {
           tableName: 'material issue',
-          columns: ['material id', 'material code', 'quantity issued', 'quantity returned', 'net usage', 'material issued by', 'date issued', 'vendor (stitching)'],
+          columns: ['material id', 'material code', 'quantity issued', 'quantity returned', 'net usage', 'material issued by', 'date issued', 'vendor (stitching)', 'notes'],
           indexColumn: 'suborder id',
           strValue: this.rowSelectedInfo[0]['sub-order id'] // get suborder id from row selected
         }
@@ -447,6 +452,7 @@ export default {
         fVal.push(['net usage', element.netIssue])
         var fValMatCode = options.find(o => o.value === element.selected)['text']
         fVal.push(['material code', fValMatCode]) // find the material code from options such that value matches selected
+        fVal.push(['notes', element.notes])
         alertMsgDetails += element.selected + ' : ' + fValMatCode + ' : ' + element.netIssue + '\n'
 
         axios.get('http://' + hostname + '/api/pushData.php', {
