@@ -20,6 +20,11 @@
           <b-button class="mb-2 mt-2" variant='success' :disabled='buttonDisabled' v-b-toggle.issueMat>Issue Material</b-button>
         </div>
 
+        <!-- work station button -->
+        <b-col cols='2' class="my-2">
+          <b-button v-b-toggle.workStationCollapse style="background-color: #000000" :disabled='buttonDisabled'>Work Station</b-button>
+        </b-col>
+
       </div>
 
       <!-- collapse for add order details button -->
@@ -30,6 +35,11 @@
       <!-- collapse for add order component -->
       <b-collapse id="addOrderCollapse" class="mb-1" v-model='showAddOrder'>
         <add-order @rowPushed='addOrderRowPushed' :key='rerenderAddOrder'></add-order>
+      </b-collapse>
+
+      <!-- collapse for work station component -->
+      <b-collapse id="workStationCollapse" class="mb-1" v-if="this.rowSelectedInfo.length>0">
+        <work-station :rowProp='rowSelectedInfo[0]' @rowUpdated='allRecords'></work-station>
       </b-collapse>
 
       <!-- collapse for issue material component -->
@@ -205,6 +215,7 @@ import addOrder from './addOrder'
 import deleteRow from './tableManip/deleteRow'
 import updateOrder from './tableManip/updateRowFolder/updateOrder'
 import addOrderDetails from './addOrderDetails'
+import workStation from './workStation'
 import 'jspdf-autoTable'
 
 export default {
@@ -213,7 +224,8 @@ export default {
     'add-order': addOrder,
     'delete-row': deleteRow,
     'update-order': updateOrder,
-    'add-order-details': addOrderDetails
+    'add-order-details': addOrderDetails,
+    'work-station': workStation
   },
   data () {
     return {
