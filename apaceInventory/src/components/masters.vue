@@ -38,6 +38,11 @@
                   <vendor-type-master></vendor-type-master>
                 </b-card-text>
               </b-tab>
+              <b-tab title="Work Station Master">
+                <b-card-text>
+                  <work-station-master></work-station-master>
+                </b-card-text>
+              </b-tab>
               <b-tab title="Raw Material Stock">
                 <b-card-text>
                   <raw-mat-stock></raw-mat-stock>
@@ -68,6 +73,7 @@ import vendorMaster from './mastersPages/vendorMaster.vue'
 import vendorTypeMaster from './mastersPages/vendorTypeMaster.vue'
 import logsTable from './mastersPages/logs'
 import rawMatStock from './mastersPages/rawMatStock'
+import workStationMaster from './mastersPages/workStationMaster'
 
 export default {
   name: 'masters',
@@ -84,7 +90,8 @@ export default {
     'vendor-master': vendorMaster,
     'vendor-type-master': vendorTypeMaster,
     'logs-table': logsTable,
-    'raw-mat-stock': rawMatStock
+    'raw-mat-stock': rawMatStock,
+    'work-station-master': workStationMaster
   }
 }
 </script>
