@@ -45,6 +45,7 @@ export default {
       fields: [
         {key: 'serial number', sortable: true},
         {key: 'material id', sortable: true},
+        {key: 'material code', sortable: true},
         {key: 'stock', sortable: true},
         {key: 'purchase price', sortable: true},
         {key: 'stock value', sortable: true},
@@ -79,6 +80,13 @@ export default {
   },
   beforeMount () {
     this.allRecords()
+  },
+
+  mounted () {
+    // event handler for rawMatStockAdded -> used when row is added in material master and raw material stock table needs reload
+    this.$root.$on('rawMatStockAdded', () => {
+      this.allRecords()
+    })
   }
 }
 </script>

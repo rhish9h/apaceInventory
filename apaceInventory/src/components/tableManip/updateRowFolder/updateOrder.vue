@@ -13,7 +13,18 @@
       <b-col>
         Order name: <strong>{{ rowProp.item['order name'] }}</strong>
       </b-col>
+    <!-- total, quantity completed and reworked -->
+      <b-col>
+        Total: <strong>{{ rowProp.item['total'] }}</strong>
+      </b-col>
+      <b-col>
+        Quantity completed: <b-input type='number' size='sm' v-model="inputs['quantity completed']"></b-input>
+      </b-col>
+      <b-col>
+        Quantity reworked: <b-input type='number' size='sm' v-model="inputs['quantity reworked']"></b-input>
+      </b-col>
     </b-row>
+    <!-- third row -->
     <b-row>
       <!-- date issued -->
       <b-col>
@@ -120,7 +131,9 @@ export default {
         'product notes': '',
         'printing details': '',
         'printing notes': '',
-        'flag': 1
+        'flag': 1,
+        'quantity completed': 0,
+        'quantity reworked': 0
       },
       vendorOptions: ['Select vendor'],
       productOptions: ['Select product'],

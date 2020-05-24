@@ -4,18 +4,27 @@
 <template>
     <div>
       <div class="row">
-        <!-- material issue button -->
-        <div class="col-md-2 mr-3">
-          <b-button class="mb-2 mt-2" variant='success' :disabled='buttonDisabled' v-b-toggle.issueMat>Issue Material</b-button>
-        </div>
+
         <!-- add order button -->
         <div class="col-md-2 my-2">
           <b-button v-b-toggle.addOrderCollapse style="background-color: #ba04de">Add Order</b-button>
         </div>
+
         <!-- add order details button -->
         <b-col cols='2' class="my-2">
           <b-button v-b-toggle.orderDetailsCollapse style="background-color: #f76c4d" :disabled='buttonDisabled'>Order Details</b-button>
         </b-col>
+
+        <!-- material issue button -->
+        <div class="col-md-2 mr-3">
+          <b-button class="mb-2 mt-2" variant='success' :disabled='buttonDisabled' v-b-toggle.issueMat>Issue Material</b-button>
+        </div>
+
+        <!-- work station button -->
+        <b-col cols='2' class="my-2">
+          <b-button v-b-toggle.workStationCollapse style="background-color: #000000" :disabled='buttonDisabled'>Work Station</b-button>
+        </b-col>
+
       </div>
 
       <!-- collapse for add order details button -->
@@ -26,6 +35,11 @@
       <!-- collapse for add order component -->
       <b-collapse id="addOrderCollapse" class="mb-1" v-model='showAddOrder'>
         <add-order @rowPushed='addOrderRowPushed' :key='rerenderAddOrder'></add-order>
+      </b-collapse>
+
+      <!-- collapse for work station component -->
+      <b-collapse id="workStationCollapse" class="mb-1" v-if="this.rowSelectedInfo.length>0">
+        <work-station :rowProp='rowSelectedInfo[0]' @rowUpdated='allRecords'></work-station>
       </b-collapse>
 
       <!-- collapse for issue material component -->
@@ -64,22 +78,31 @@
                 </div>
               </div>
 
+              <!-- message to be displayed if person issuing order not stated -->
+              <!-- only displays when issuedBy input is empty, push material button stays disabled until name of person is filled -->
+              <div v-if="!issuedBy" class="row mt">
+                <div class="col-md-3 offset-md-3 pl-4" style="color: red">
+                  enter name of person issuing
+                </div>
+              </div>
+
               <hr>
 
               <div class="row font-weight-bold">
-                <div class="col-md-5"><center>material code</center></div>
+                <div class="col-md-3"><center>material code</center></div>
                 <div class="col-md-1">material id</div>
                 <div class="col-md-1">quantity issued</div>
                 <div class="col-md-1">quantity inward</div>
                 <div class="col-md-1">net issued</div>
                 <div class="col-md-1">stock available</div>
                 <div class="col-md-1">predicted stock</div>
+                <div class="col-md-2">notes</div>
               </div>
 
               <!-- loop for adding material issue/inward row -->
 
               <div class="row mt-1" v-for="(row, index) in issInwRow" :key='index'>
-                <div class="col-md-5">
+                <div class="col-md-3">
                   <b-form-select size='sm' @change="matCodeChanged(row)" v-if="options.length > 1" v-model="row.selected" :options="options"></b-form-select>
                   <!-- v-if added to check if options is populated -->
                 </div>
@@ -95,6 +118,8 @@
                 <div class="mt-1 col-md-1" @change="issInwChanged(row)">{{ row.rawAvail }}</div>
                 <!-- predicted stock -->
                 <div class="mt-1 col-md-1">{{ row.updatedStock }}</div>
+                <!-- notes -->
+                <div class="mt-1 col-md-2"><b-input size='sm' type='text' v-model='row.notes'></b-input></div>
                 <!-- delete row button -->
                 <div class="col-md-1"><b-button size='sm' variant='danger' @click="remMatRow(index)"><strong>-</strong></b-button></div>
 
@@ -190,6 +215,7 @@ import addOrder from './addOrder'
 import deleteRow from './tableManip/deleteRow'
 import updateOrder from './tableManip/updateRowFolder/updateOrder'
 import addOrderDetails from './addOrderDetails'
+import workStation from './workStation'
 import 'jspdf-autoTable'
 
 export default {
@@ -198,7 +224,8 @@ export default {
     'add-order': addOrder,
     'delete-row': deleteRow,
     'update-order': updateOrder,
-    'add-order-details': addOrderDetails
+    'add-order-details': addOrderDetails,
+    'work-station': workStation
   },
   data () {
     return {
@@ -253,7 +280,8 @@ export default {
           rawAvail: -99,
           updatedStock: -99,
           message: 'select material code',
-          purchasePrice: -99
+          purchasePrice: -99,
+          notes: ''
         }
       ], // array that holds all material issues/inwards to be done at a time
       issPerSubOrder: [], // array that holds material issues per suborder - got from backend
@@ -277,7 +305,7 @@ export default {
       doc.text('Order Name: ' + this.rowSelectedInfo[0]['order name'], 10, 30)
       // convert table as it is
       doc.autoTable({
-        styles: {halign: 'center'},
+        styles: {halign: 'center', lineWidth: 0.2, lineColor: [0, 0, 0]},
         html: '#issueTable',
         startY: 35
       })
@@ -325,7 +353,8 @@ export default {
         rawAvail: -99,
         updatedStock: -99,
         message: 'select material code',
-        purchasePrice: -99
+        purchasePrice: -99,
+        notes: ''
       })
     },
     // call backend to get all material issues per suborder id
@@ -334,7 +363,7 @@ export default {
         // send actual table name and fields along with input data
         params: {
           tableName: 'material issue',
-          columns: ['material id', 'material code', 'quantity issued', 'quantity returned', 'net usage', 'material issued by', 'date issued', 'vendor (stitching)'],
+          columns: ['material id', 'material code', 'quantity issued', 'quantity returned', 'net usage', 'material issued by', 'date issued', 'vendor (stitching)', 'notes'],
           indexColumn: 'suborder id',
           strValue: this.rowSelectedInfo[0]['sub-order id'] // get suborder id from row selected
         }
@@ -420,6 +449,9 @@ export default {
       var options = this.options
       var hostname = this.$hostname
       var thisObj = this
+      // message used to display in the alert box
+      var alertMsgDetails = 'Materials issued:\n'
+      alertMsgDetails += 'Material id   :   Material code   :   Net Issued\n\n'
       this.issInwRow.forEach(function (element) {
         let fVal = []
         for (let key in inputs) {
@@ -430,7 +462,11 @@ export default {
         fVal.push(['quantity issued', element.issued])
         fVal.push(['quantity returned', element.inward])
         fVal.push(['net usage', element.netIssue])
-        fVal.push(['material code', options.find(o => o.value === element.selected)['text']]) // find the material code from options such that value matches selected
+        var fValMatCode = options.find(o => o.value === element.selected)['text']
+        fVal.push(['material code', fValMatCode]) // find the material code from options such that value matches selected
+        fVal.push(['notes', element.notes])
+        alertMsgDetails += element.selected + ' : ' + fValMatCode + ' : ' + element.netIssue + '\n'
+
         axios.get('http://' + hostname + '/api/pushData.php', {
           // send actual table name and fields along with input data
           params: {
@@ -440,18 +476,23 @@ export default {
         })
           .then((response) => {
             thisObj.getMatIssPerSub() // reload table - by getting mat iss info again
-            alert('material pushed successfully!')
           })
           .catch(function (error) {
             console.log(error)
+            alert('Error in issuing material:\n' + element.selected + ' : ' + fValMatCode + ' : ' + element.netIssue)
           })
       })
+      alert(alertMsgDetails)
     },
     // update material stock
     updateStock () {
       var hostname = this.$hostname
+      // message used to display in the alert box
+      var alertMsgDetails = 'Raw Material Stock Updated:\n'
+      alertMsgDetails += 'Material id   :   Updated Stock\n\n'
       this.issInwRow.forEach(function (element) {
         var axios = require('axios')
+        alertMsgDetails += element.selected + ' : ' + element.updatedStock + '\n'
         axios.get('http://' + hostname + '/api/updateData.php', {
           // send actual table name and fields along with input data
           params: {
@@ -465,12 +506,14 @@ export default {
           }
         })
           .then((response) => {
-            alert('stock updated!')
+            this.$root.$emit('rawMatStockAdded') // emit event named rawMatStockAdded - for reloading the raw material stock table
           })
           .catch(function (error) {
             console.log(error)
+            alert('Error in updating raw material:\n' + element.selected + ' : ' + this.options.find(o => o.value === element.selected)['text'] + ' : ' + element.netIssue)
           })
       })
+      alert(alertMsgDetails)
     },
     // on button click to PUSH ALL MATERIALS
     pushMaterial: function () {
@@ -544,12 +587,16 @@ export default {
     // checks message of all objects in issInwRow, can issue if all messages are ''
     canIssue () {
       var rowlen = this.issInwRow.length
-      if (rowlen < 1) {
+      if (rowlen < 1) { // nothing being issued
         return false
       } else {
         for (let i = 0; i < rowlen; i++) {
-          if (this.issInwRow[i].message !== '') {
+          if (this.issInwRow[i].message !== '') { // errors in new issue
             return false
+          } else {
+            if (!this.issuedBy) { // issued by person not stated
+              return false
+            }
           }
         }
         return true

@@ -40,6 +40,15 @@ Steps:
 -start Apache  
 -start MySQL
 
+## Build and run production code
+
+1. cd to apaceInventory-master/apaceInventory-master/apaceInventory
+    > npm run build
+2. If serve is not installed
+    > npm install -g serve
+3. To start production build 
+    > serve -s dist
+
 ## Server configuration
 
 Set up for devices on same network to connect to the server  

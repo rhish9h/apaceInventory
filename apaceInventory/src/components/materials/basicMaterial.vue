@@ -35,6 +35,9 @@
           Predicted Stock after material issue: <strong>{{ updatedStock }}</strong>
         </div>
       </b-card>
+      <b-card>
+        <b-form-textarea type='text' placeholder='notes' v-model="notes"></b-form-textarea>
+      </b-card>
     </div>
 
     <br>
@@ -80,7 +83,8 @@ export default {
       dateip: new Date().toISOString().slice(0, 10),
       matIssRow: '',
       issuedBy: '',
-      modalShow: false
+      modalShow: false,
+      notes: ''
     }
   },
   methods: {
@@ -159,6 +163,7 @@ export default {
       })
         .then((response) => {
           alert('stock updated!')
+          this.$root.$emit('rawMatStockAdded') // emit event named rawMatStockAdded - for reloading the raw material stock table
         })
         .catch(function (error) {
           console.log(error)
@@ -214,7 +219,8 @@ export default {
           'material inward by': this.issuedBy,
           'vendor (stitching)': this.vendorSelected,
           'vendor (printing)': this.vendorSelected,
-          'vendor (packing)': this.vendorSelected
+          'vendor (packing)': this.vendorSelected,
+          'notes': this.notes
         }
       }
     },

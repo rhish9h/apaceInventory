@@ -201,7 +201,7 @@ export default {
       })
       // table has auto page break
       doc.autoTable({
-        styles: {halign: 'center'},
+        styles: {halign: 'center', lineWidth: 0.2, lineColor: [0, 0, 0]},
         head: [['Size', 'Quantity']],
         body: tempBody,
         startY: 50
@@ -303,7 +303,7 @@ export default {
           ['quantity', elem.quantity]
         ])
       })
-      // console.log(fVal)
+      console.log(fVal)
       this.axios.get('http://' + this.$hostname + '/api/pushMultiDetails.php', {
         // send actual table name and fields along with input data
         params: {
